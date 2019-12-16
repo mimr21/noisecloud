@@ -42,6 +42,20 @@ public class Model {
         }
     }
 
+    public boolean logout(String name) throws UserNotFoundException{
+        if(!this.users.containsKey(name))
+            throw new UserNotFoundException("Utilizador não existente.");
+
+        User u = users.get(name);
+        if(!u.getLog())
+            return false;            //se já tiver feito logout
+        else{
+            u.setLog(false);
+            return true;
+        }
+    }
+
+
     public String listUsers(){
         if(this.users.size() == 0)
             return "Não existem utilizadores.";

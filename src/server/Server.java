@@ -47,6 +47,7 @@ public class Server {
                             out.println(e);
                         }
                         break;
+
                     case "login":
                         try {
                             out.println(model.login(cmd[1], cmd[2]));
@@ -57,9 +58,20 @@ public class Server {
                             out.println(e);
                         }
                         break;
+
+                    case "logout":
+                        try{
+                            out.println(model.logout(cmd[1]));
+                        } catch (UserNotFoundException e){
+                            e.printStackTrace();
+                            out.println(e);
+                        }
+                        break;
+
                     case "users":
                         out.println(model.listUsers());
                         break;
+
                     case "upload":
                         out.println(model.upload(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]));
                         break;
