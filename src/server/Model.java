@@ -38,6 +38,7 @@ public class Model {
             return false;           //se já tiver feito login
         else {
             u.setLog(true);
+            u.lockUser();
             return true;
         }
     }
@@ -51,6 +52,7 @@ public class Model {
             return false;            //se já tiver feito logout
         else{
             u.setLog(false);
+            u.unlockUser();
             return true;
         }
     }

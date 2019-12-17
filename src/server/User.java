@@ -1,14 +1,18 @@
 package server;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class User {
     private String username;
     private String password;
     private boolean log;
+    private ReentrantLock user_lock;
 
     public User(String n, String p){
         this.username = n;
         this.password = p;
         this.log = false;
+        this.user_lock = new ReentrantLock();
     }
 
     public User(User u){
@@ -45,4 +49,12 @@ public class User {
     public boolean isValid(String pass){
         return this.password.equals(pass);
     }
+
+    public void lockUser(){
+        this.user_lock.lock();
+    }
+    public void unlockUser(){
+        this.user_lock.unlock();
+    }
+
 }
