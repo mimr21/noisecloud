@@ -1,0 +1,5 @@
+.idea/$PRODUCT_WORKSPACE_FILE$
+.idea/dictionaries
+.idea/workspace.xml
+out/production/
+out/test/
