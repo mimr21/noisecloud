@@ -7,7 +7,7 @@ import exceptions.UsernameAlreadyExistsException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Model {
+public class Model implements IModel{
     private Map<String, User> users;        //username, server.User
     private Map<Integer, Media> media;
     private int currentID;
@@ -18,15 +18,15 @@ public class Model {
         this.currentID = 0;
     }
 
-    public int addUser(String name, String pass) throws UsernameAlreadyExistsException{
+    public String addUser(String name, String pass) throws UsernameAlreadyExistsException{
         if(!this.users.containsKey(name))
             this.users.put(name, new User(name, pass));
         else
             throw new UsernameAlreadyExistsException("Nome de utilizador já existente");
-        return 1;
+        return "Utilizador adicionado com sucesso";
     }
 
-    public boolean login(String name, String pass) throws UserNotFoundException, InvalidPasswordException {
+    public String login(String name, String pass) throws UserNotFoundException, InvalidPasswordException {
         if(!this.users.containsKey(name))
             throw new UserNotFoundException("Utilizador não existente.");
         else
@@ -35,23 +35,23 @@ public class Model {
 
         User u = users.get(name);
         if(u.getLog())
-            return false;           //se já tiver feito login
+            return "Login já realizado";           //se já tiver feito login
         else {
             u.setLog(true);
-            return true;
+            return "Login com sucesso";
         }
     }
 
-    public boolean logout(String name) throws UserNotFoundException{
+    public String logout(String name) throws UserNotFoundException{
         if(!this.users.containsKey(name))
             throw new UserNotFoundException("Utilizador não existente.");
 
         User u = users.get(name);
         if(!u.getLog())
-            return false;            //se já tiver feito logout
+            return "Logout já realizado";            //se já tiver feito logout
         else{
             u.setLog(false);
-            return true;
+            return "Logout com sucesso";
         }
     }
 
@@ -63,16 +63,11 @@ public class Model {
             return this.users.toString();
     }
 
-    public int upload(String file, String name, String artist, int year, String[] tags){
+    public String upload(String name, String artist, String year, String tags, byte[] file){
         int id = this.currentID++;
-        byte[] fbytes = new byte[file.length()];
-
-        for (int i=0 ; i < fbytes.length; i++) {
-            fbytes[i] = Byte.parseByte(file);       /*ainda não tá bem */
-        }
-
-        Media m = new Media(id, name, artist, year, tags, 0, fbytes);
+        String[] t = tags.split("/");
+        Media m = new Media(id, name, artist, Integer.parseInt(year), t, 0, file);
         this.media.put(id, m);
-        return id;
+        return ("Upload feito com sucesso. ID da música: " + id);
     }
 }

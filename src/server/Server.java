@@ -73,7 +73,7 @@ public class Server {
                         break;
 
                     case "upload":
-                        out.println(model.upload(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]));
+                        out.println(model.upload(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]);
                         break;
                     default:
                         out.println("Operação desconhecida.");
