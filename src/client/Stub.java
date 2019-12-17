@@ -15,10 +15,11 @@ public class Stub implements IModel {
     private boolean login;
 
 
-    public Stub() throws IOException {
-        this.socket =  new Socket("127.0.0.1", 12345);
+    public Stub(String host, int port) throws IOException {
+        this.socket =  new Socket(host, port);
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream());
+        this.login = false;
     }
 
     public void end(){
@@ -34,6 +35,7 @@ public class Stub implements IModel {
     @Override
     public String addUser(String name, String pass)  {
         out.println("addUser" + " " + name + " " + pass);
+        out.flush();
         String s = null;
         try {
             s = in.readLine();
@@ -46,12 +48,15 @@ public class Stub implements IModel {
     @Override
     public String login(String name, String pass) {
         out.println("login " + name + " " + pass);
+        out.flush();
         String s = null;
         try {
             s = in.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(s.equals("Login com sucesso"))
+            this.login = true;
         return s;
     }
 
@@ -60,11 +65,14 @@ public class Stub implements IModel {
         String s = null;
         if(this.login) {
             out.println("logout " + name);
+            out.flush();
             try {
                 s = in.readLine();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if(s.equals("Logout com sucesso"))
+                this.login = false;
         }
         else
             s = "Impossível realizar a operação. Faça login primeiro.";
@@ -76,6 +84,7 @@ public class Stub implements IModel {
         String s = null;
         if(this.login) {
             out.println("listUsers");
+            out.flush();
             try {
                 s = in.readLine();
             } catch (IOException e) {
@@ -92,6 +101,7 @@ public class Stub implements IModel {
         String s = null;
         if(this.login) {
             out.println("addUser " + name + " " + artist + " " + year + " " + tags + " " + file);
+            out.flush();
             try {
                 s = in.readLine();
             } catch (IOException e) {

@@ -7,7 +7,7 @@ import java.nio.file.Files;
 public class Client {
 
     public void startClient() throws  IOException{
-        Stub stub = new Stub();
+        Stub stub = new Stub("127.0.0.1", 12345);
 
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         // todo: falta checkar se têm o numero de argumentos necessários (como está no upload)
