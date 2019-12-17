@@ -2,6 +2,7 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 
 public class Client {
@@ -27,13 +28,15 @@ public class Client {
             s = stdin.readLine();
 
             if( s.equals("upload")){
-                meta = s.split(" ");          //upload, nome(ou path) e outros dados (mais à frente)
-                String currentDirectory = System.getProperty("user.dir");
-                File f = new File(currentDirectory + "\\" + meta[1]);
-                int c = 0;
-                byte[] m = new byte[1024];
-                while(c < f.length()){
-                        //i need to converter um file em binário para mandar ao server kthxbai
+                meta = s.split(" ");                    //upload, nome do ficheiro , artista, ano, tag1, tag2 ...
+                if(meta.length >= 5) {
+                    String currentDirectory = System.getProperty("user.dir");
+                    String path = currentDirectory + "\\" + meta[1];
+                    byte[] file = Files.readAllBytes(new File(path).toPath());
+                    out.println(meta[0] + " " + meta[1] + " " + meta[2] + " " + meta[3] + " " + meta[4] + " " + meta[5] + " " + file);
+                }
+                else {
+                    System.out.println("Dados incorretos. Insira novamente.");
                 }
             }
 
