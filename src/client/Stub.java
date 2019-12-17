@@ -83,7 +83,7 @@ public class Stub implements IModel {
     public String listUsers() {
         String s = null;
         if(this.login) {
-            out.println("listUsers");
+            out.println("users");
             out.flush();
             try {
                 s = in.readLine();
