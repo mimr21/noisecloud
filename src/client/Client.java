@@ -1,11 +1,12 @@
 package client;
 
+import model.IModel;
+
 import java.io.*;
 import java.nio.file.Files;
 
 
 public class Client {
-
     public void startClient() throws  IOException{
         Stub stub = new Stub("127.0.0.1", 12345);
 

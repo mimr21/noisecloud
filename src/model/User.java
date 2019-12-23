@@ -1,6 +1,7 @@
-package server;
+package model;
 
 import java.util.concurrent.locks.ReentrantLock;
+
 
 public class User {
     private String username;

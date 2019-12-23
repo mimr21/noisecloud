@@ -3,11 +3,16 @@ package server;
 import exceptions.InvalidPasswordException;
 import exceptions.UserNotFoundException;
 import exceptions.UsernameAlreadyExistsException;
+import model.IModel;
+import model.Media;
+import model.User;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Model implements IModel{
+
+// package-private
+class Model implements IModel {
     private Map<String, User> users;        //username, server.User
     private Map<Integer, Media> media;
     private int currentID;

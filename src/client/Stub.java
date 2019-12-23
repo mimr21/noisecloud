@@ -1,14 +1,17 @@
 package client;
 
-import server.IModel;
+import model.IModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
-public class Stub implements IModel {
+
+// package-private
+class Stub implements IModel {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -32,7 +35,6 @@ public class Stub implements IModel {
         }
     }
 
-    @Override
     public String addUser(String name, String pass)  {
         out.println("addUser" + " " + name + " " + pass);
         out.flush();
@@ -45,7 +47,6 @@ public class Stub implements IModel {
         return s;
     }
 
-    @Override
     public String login(String name, String pass) {
         out.println("login " + name + " " + pass);
         out.flush();
@@ -60,7 +61,6 @@ public class Stub implements IModel {
         return s;
     }
 
-    @Override
     public String logout(String name) {
         String s = null;
         if(this.login) {
@@ -79,7 +79,6 @@ public class Stub implements IModel {
         return s;
     }
 
-    @Override
     public String listUsers() {
         String s = null;
         if(this.login) {
@@ -96,11 +95,10 @@ public class Stub implements IModel {
         return s;
     }
 
-    @Override
     public String upload(String name, String artist, String year, String tags, byte[] file) {
         String s = null;
         if(this.login) {
-            out.println("addUser " + name + " " + artist + " " + year + " " + tags + " " + file);
+            out.println("addUser " + name + " " + artist + " " + year + " " + tags + " " + Arrays.toString(file));
             out.flush();
             try {
                 s = in.readLine();
