@@ -23,6 +23,8 @@ class Model implements IModel {
         this.currentID = 0;
     }
 
+    public void end() {}
+
     public String addUser(String name, String pass) throws UsernameAlreadyExistsException{
         if(!this.users.containsKey(name))
             this.users.put(name, new User(name, pass));

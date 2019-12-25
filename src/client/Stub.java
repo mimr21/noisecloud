@@ -25,7 +25,7 @@ class Stub implements IModel {
         this.login = false;
     }
 
-    public void end(){
+    public void end() {
         try {
             socket.shutdownOutput();
             socket.shutdownInput();
@@ -35,7 +35,7 @@ class Stub implements IModel {
         }
     }
 
-    public String addUser(String name, String pass)  {
+    public String addUser(String name, String pass) {
         out.println("addUser" + " " + name + " " + pass);
         out.flush();
         String s = null;

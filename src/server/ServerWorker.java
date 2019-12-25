@@ -29,66 +29,57 @@ class ServerWorker implements Runnable {
             PrintWriter out = new PrintWriter(clSock.getOutputStream());
             String s;
 
-            while (!((s = in.readLine()).equals("quit"))) {
+            while ((s = in.readLine()) != null && !s.equals("quit")) {
 
                 /*Debug*/
                 System.out.println("Client says: " + s);
 
-                String cmd[] = s.split(" ");
+                String[] cmd = s.split(" ");
 
-                switch (cmd[0]) {
-                    case "addUser":
-                        try {
+                try {
+                    switch (cmd[0]) {
+                        case "addUser":
                             out.println(model.addUser(cmd[1], cmd[2]));
-                        } catch (UsernameAlreadyExistsException e) {
-                            e.printStackTrace();
-                            out.println(e);
-                        }
-                        break;
+                            break;
 
-                    case "login":
-                        try {
+                        case "login":
                             out.println(model.login(cmd[1], cmd[2]));
                             /*Debug*/
                             System.out.println(model.login(cmd[1], cmd[2]));
-                        } catch (UserNotFoundException | InvalidPasswordException e) {
-                            e.printStackTrace();
-                            out.println(e);
-                        }
-                        break;
+                            break;
 
-                    case "logout":
-                        try {
+                        case "logout":
                             out.println(model.logout(cmd[1]));
-                        } catch (UserNotFoundException e) {
-                            e.printStackTrace();
-                            out.println(e);
-                        }
-                        break;
+                            break;
 
-                    case "users":
-                        out.println(model.listUsers());
-                        break;
+                        case "users":
+                            out.println(model.listUsers());
+                            break;
 
-                    case "upload":
-                        //out.println(model.upload(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]);
-                        break;
-                    default:
-                        out.println("Operação desconhecida.");
+                        case "upload":
+                            //out.println(model.upload(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]);
+                            break;
+
+                        default:
+                            out.println("Operação desconhecida.");
+                    }
+                } catch (UsernameAlreadyExistsException | UserNotFoundException | InvalidPasswordException e) {
+                    e.printStackTrace();
+                    out.println(e);
                 }
                 out.flush();
             }
-        } catch (SocketException se) {
+        } catch (SocketException e) {
             // Client closed
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         } finally {
             try {
                 clSock.shutdownOutput();
                 clSock.shutdownInput();
                 clSock.close();
-            } catch (IOException ioe) {
-                System.err.println(ioe.getMessage());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
         }
     }

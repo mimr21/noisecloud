@@ -6,6 +6,8 @@ import exceptions.UsernameAlreadyExistsException;
 
 
 public interface IModel {
+    void end();
+
     String addUser(String name, String pass) throws UsernameAlreadyExistsException;
 
     String login(String name, String pass) throws UserNotFoundException, InvalidPasswordException;
