@@ -1,80 +1,132 @@
 package server;
 
-import exceptions.InvalidPasswordException;
-import exceptions.UserNotFoundException;
-import exceptions.UsernameAlreadyExistsException;
-import model.IModel;
-import model.Media;
-import model.User;
+import exceptions.*;
+import model.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 // package-private
 class Model implements IModel {
-    private Map<String, User> users;        //username, server.User
-    private Map<Integer, Media> media;
-    private int currentID;
+    private LockableMap<String, User> users;        // (username, User)
+    private LockableMap<Integer, Song> songs;       // (id, Song)
+    private ID songID;                              // next song id
+    private ReentrantLock lockModel;
+
 
     public Model() {
-        this.users = new HashMap<>();
-        this.media = new HashMap<>();
-        this.currentID = 0;
+        this.songID = new ID();
+        this.users = new LockableHashMap<>();
+        this.songs = new LockableHashMap<>();
+        this.lockModel = new ReentrantLock(true);
     }
 
     public void end() {}
 
-    public String addUser(String name, String pass) throws UsernameAlreadyExistsException{
-        if(!this.users.containsKey(name))
-            this.users.put(name, new User(name, pass));
-        else
-            throw new UsernameAlreadyExistsException("Nome de utilizador já existente");
-        return "Utilizador adicionado com sucesso";
-    }
+    public void addUser(String username, String password) throws UsernameAlreadyExistsException {
+        lockModel.lock();
+        users.lock();
+        lockModel.unlock();
 
-    public String login(String name, String pass) throws UserNotFoundException, InvalidPasswordException {
-        if(!this.users.containsKey(name))
-            throw new UserNotFoundException("Utilizador não existente.");
-        else
-            if(!this.users.get(name).isValid(pass))
-                throw new InvalidPasswordException("Password incorreta.");
+        try {
+            if (users.containsKey(username))
+                throw new UsernameAlreadyExistsException(username);
 
-        User u = users.get(name);
-        if(u.getLog())
-            return "Login já realizado";           //se já tiver feito login
-        else {
-            u.setLog(true);
-            return "Login com sucesso";
+            users.put(username, new User(username, password));
+        } finally {
+            users.unlock();
         }
     }
 
-    public String logout(String name) throws UserNotFoundException{
-        if(!this.users.containsKey(name))
+    public boolean login(String username, String password) throws UserNotFoundException, InvalidPasswordException {
+        lockModel.lock();
+        users.lock();
+        lockModel.unlock();
+
+        if (!users.containsKey(username)) {
+            users.unlock();
+            throw new UserNotFoundException(username);
+        }
+
+        User u = users.get(username);
+        u.lock();
+        users.unlock();
+
+        try {
+            if (!u.isValid(password))
+                throw new InvalidPasswordException();
+
+            boolean r;
+            if (u.getLog()) {
+                r = false;           // se já tiver feito login
+            } else {
+                u.setLog(true);
+                r = true;
+            }
+
+            return r;
+        } finally {
+            u.unlock();
+        }
+    }
+
+    public boolean logout(String name) throws UserNotFoundException {
+        lockModel.lock();
+        users.lock();
+        lockModel.unlock();
+
+        if (!users.containsKey(name)) {
+            users.unlock();
             throw new UserNotFoundException("Utilizador não existente.");
+        }
 
         User u = users.get(name);
-        if(!u.getLog())
-            return "Logout já realizado";            //se já tiver feito logout
-        else{
+        u.lock();
+        users.unlock();
+
+        boolean r;
+        if (u.getLog()) {
             u.setLog(false);
-            return "Logout com sucesso";
+            r = true;
+        } else {
+            r = false;            // se já tiver feito logout
+        }
+
+        u.unlock();
+
+        return r;
+    }
+
+    public Collection<User> listUsers() {
+        lockModel.lock();
+        users.lock();
+        lockModel.unlock();
+
+        try {
+            return users.values();
+        } finally {
+            users.unlock();
         }
     }
 
+    public int upload(String title, String artist, int year, String tags) {
+        lockModel.lock();
+        songs.lock();
+        songID.lock();
+        lockModel.unlock();
 
-    public String listUsers(){
-        if(this.users.size() == 0)
-            return "Não existem utilizadores.";
-        else
-            return this.users.toString();
-    }
+        int id = songID.getAndIncrement();
+        songID.unlock();
 
-    public String upload(String name, String artist, String year, String tags, byte[] file){
-        int id = this.currentID++;
         String[] t = tags.split("/");
-        Media m = new Media(id, name, artist, Integer.parseInt(year), t, 0, file);
-        this.media.put(id, m);
-        return ("Upload feito com sucesso. ID da música: " + id);
+        Song s = new Song(id, title, artist, year, t, 0);
+        songs.put(id, s);
+
+        songs.unlock();
+
+        return id;
     }
 }

@@ -2,7 +2,11 @@ package exceptions;
 
 
 public class UserNotFoundException extends Exception {
-    public UserNotFoundException() {super();}
+    public UserNotFoundException() {
+        super();
+    }
 
-    public UserNotFoundException(String message) {super(message);}
+    public UserNotFoundException(String username) {
+        super("Utilizador '" + username + "' não existe.");
+    }
 }
