@@ -1,27 +1,29 @@
 package client;
 
+import exceptions.RemoteModelException;
+import model.EpicInputStream;
+import model.EpicOutputStream;
 import model.IModel;
+import model.User;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collection;
 
 
 // package-private
 class Stub implements IModel {
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private EpicInputStream in;
+    private EpicOutputStream out;
     private boolean login;
 
 
     public Stub(String host, int port) throws IOException {
         this.socket =  new Socket(host, port);
-        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.out = new PrintWriter(socket.getOutputStream());
+        this.in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
+        this.out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
         this.login = false;
     }
 
@@ -31,83 +33,108 @@ class Stub implements IModel {
             socket.shutdownInput();
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
-    public String addUser(String name, String pass) {
-        out.println("addUser" + " " + name + " " + pass);
-        out.flush();
-        String s = null;
-        try {
-            s = in.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return s;
-    }
-
-    public String login(String name, String pass) {
-        out.println("login " + name + " " + pass);
-        out.flush();
-        String s = null;
-        try {
-            s = in.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(s.equals("Login com sucesso"))
-            this.login = true;
-        return s;
-    }
-
-    public String logout(String name) {
-        String s = null;
-        if(this.login) {
-            out.println("logout " + name);
-            out.flush();
+    public void addUser(String name, String pass) throws RemoteModelException {
+        if (login) {
             try {
-                s = in.readLine();
+                out.println("addUser " + name + " " + pass);
+                out.flush();
+
+                String s = in.readLine();
+
+                //return s;
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RemoteModelException(e.getMessage());
             }
-            if(s.equals("Logout com sucesso"))
-                this.login = false;
+        } else {
+            throw new RemoteModelException("Login já realizado.");
         }
-        else
-            s = "Impossível realizar a operação. Faça login primeiro.";
-        return s;
     }
 
-    public String listUsers() {
-        String s = null;
-        if(this.login) {
-            out.println("users");
-            out.flush();
+    public boolean login(String name, String pass) throws RemoteModelException {
+        if (login) {
+            return true;
+        } else {
             try {
-                s = in.readLine();
+                out.println("login " + name + " " + pass);
+                out.flush();
+
+                String s = in.readLine();
+
+                if (s.equals("Login com sucesso"))
+                    login = true;
+
+                //return s;
+                return false;
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RemoteModelException(e.getMessage());
             }
         }
-        else
-            s = "Impossível realizar a operação. Faça login primeiro.";
-        return s;
     }
 
-    public String upload(String name, String artist, String year, String tags, byte[] file) {
-        String s = null;
-        if(this.login) {
-            out.println("addUser " + name + " " + artist + " " + year + " " + tags + " " + Arrays.toString(file));
-            out.flush();
+    public boolean logout(String name) throws RemoteModelException {
+        String s;
+
+        if (login) {
             try {
+                out.println("logout " + name);
+                out.flush();
+
+                s = in.readLine();
+
+                if (s.equals("Logout com sucesso"))
+                    login = false;
+            } catch (IOException e) {
+                throw new RemoteModelException(e.getMessage());
+            }
+        } else {
+            s = "Impossível realizar a operação. Faça login primeiro.";
+        }
+
+        //return s;
+        return false;
+    }
+
+    public Collection<User> listUsers() throws RemoteModelException {
+        String s;
+
+        if (login) {
+            try {
+                out.println("users");
+                out.flush();
+
                 s = in.readLine();
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RemoteModelException(e.getMessage());
             }
-        }
-        else
+        } else {
             s = "Impossível realizar a operação. Faça login primeiro.";
-        return s;
+        }
+
+        //return s;
+        return null;
+    }
+
+    public int upload(String title, String artist, int year, String tags) throws RemoteModelException {
+        String s;
+
+        if (login) {
+            try {
+                out.println("addUser " + title + " " + artist + " " + year + " " + tags);
+                out.flush();
+
+                s = in.readLine();
+            } catch (IOException e) {
+                throw new RemoteModelException(e.getMessage());
+            }
+        } else {
+            s = "Impossível realizar a operação. Faça login primeiro.";
+        }
+
+        //return s;
+        return 0;
     }
 }

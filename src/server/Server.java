@@ -16,8 +16,7 @@ public class Server {
         while (true) {
             Socket clSock = sSock.accept();
 
-            Runnable sw = new ServerWorker(clSock, model);
-            Thread t = new Thread(sw);
+            Thread t = new Thread(new ServerWorker(clSock, model));
             t.start();
         }
     }

@@ -1,15 +1,15 @@
 package server;
 
 import exceptions.InvalidPasswordException;
+import exceptions.RemoteModelException;
 import exceptions.UserNotFoundException;
 import exceptions.UsernameAlreadyExistsException;
+import model.EpicInputStream;
+import model.EpicOutputStream;
 import model.IModel;
 import model.User;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Collection;
@@ -17,61 +17,61 @@ import java.util.Collection;
 
 // package-private
 class ServerWorker implements Runnable {
-    private Socket clSock;
+    private Socket socket;
     private IModel model;
 
 
-    public ServerWorker(Socket s, IModel m) {
-        clSock = s;
-        model = m;
+    public ServerWorker(Socket socket, IModel model) {
+        this.socket = socket;
+        this.model = model;
     }
 
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clSock.getInputStream()));
-            PrintWriter out = new PrintWriter(clSock.getOutputStream());
-            String received, send;
+            EpicInputStream in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
+            EpicOutputStream out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
+            String request, reply;
 
-            while ((received = in.readLine()) != null && !received.equals("quit")) {
+            while ((request = in.readLine()) != null && !request.equals("quit")) {
 
                 /*Debug*/
-                System.out.println("Client says: " + received);
+                System.out.println("Client says: " + request);
 
-                String[] cmd = received.split(" ");
+                String[] cmd = request.split(" ");
 
                 try {
                     switch (cmd[0]) {
                         case "addUser":
                             model.addUser(cmd[1], cmd[2]);
-                            send = "Utilizador adicionado com sucesso.";
+                            reply = "";
                             break;
 
                         case "login":
-                            send = model.login(cmd[1], cmd[2]) ? "Login com sucesso." : "Login já realizado.";
+                            reply = model.login(cmd[1], cmd[2]) ? "" : "";
                             break;
 
                         case "logout":
-                            send = model.logout(cmd[1]) ? "Logout com sucesso." : "Logout já realizado.";
+                            reply = model.logout(cmd[1]) ? "" : "";
                             break;
 
                         case "users":
                             Collection<User> users = model.listUsers();
-                            send = users.isEmpty() ? "Não existem utilizadores." : users.toString();
+                            reply = users.isEmpty() ? "" : users.toString();
                             break;
 
                         case "upload":
                             int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4]/*, cmd[5]*/);
-                            send = "Upload feito com sucesso. ID da música: " + id;
+                            reply = "";
                             break;
 
                         default:
-                            send = "Operação desconhecida.";
+                            reply = "Operação desconhecida.";
                     }
-                } catch (UsernameAlreadyExistsException | UserNotFoundException
-                        | InvalidPasswordException | NumberFormatException e) {
-                    send = e.getMessage();
+                } catch (RemoteModelException | UsernameAlreadyExistsException
+                        | UserNotFoundException | InvalidPasswordException | NumberFormatException e) {
+                    reply = e.getMessage();
                 }
-                out.println(send);
+                out.println(reply);
                 out.flush();
             }
         } catch (SocketException e) {
@@ -80,9 +80,9 @@ class ServerWorker implements Runnable {
             System.err.println(e.getMessage());
         } finally {
             try {
-                clSock.shutdownOutput();
-                clSock.shutdownInput();
-                clSock.close();
+                socket.shutdownOutput();
+                socket.shutdownInput();
+                socket.close();
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
