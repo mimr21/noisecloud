@@ -3,11 +3,13 @@ package model;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class User implements Lockable {
+public class User implements Lockable, Cerealizable, Comparable<User> {
     private String username;
     private String password;
     private boolean log;
+
     private ReentrantLock lock;
+
 
     public User(String username, String password) {
         this.username = username;
@@ -21,6 +23,18 @@ public class User implements Lockable {
         this.password = u.password;
         this.log = u.log;
         this.lock = new ReentrantLock(true);
+    }
+
+    private User(String username, String password, boolean log) {
+        this.username = username;
+        this.password = password;
+        this.log = log;
+        this.lock = new ReentrantLock(true);
+    }
+
+    public static User descerealize(String s) {
+        String[] args = s.split(Cerealizable.ARGS_SEPARATOR);
+        return new User(args[0], args[1], Boolean.parseBoolean(args[2]));
     }
 
     public String getUsername() {return this.username;}
@@ -43,9 +57,9 @@ public class User implements Lockable {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Utilizador {");
-        sb.append("nome_de_utilizador=").append(this.username);
-        sb.append("}");
+        sb.append("Utilizador {nome_de_utilizador=")
+                .append(username)
+                .append("}");
         return sb.toString();
     }
 
@@ -59,6 +73,18 @@ public class User implements Lockable {
 
     public void unlock() {
         this.lock.unlock();
+    }
+
+    public String cerealize() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(username).append(Cerealizable.ARGS_SEPARATOR)
+                .append(password).append(Cerealizable.ARGS_SEPARATOR)
+                .append(log);
+        return sb.toString();
+    }
+
+    public int compareTo(User u) {
+        return this.username.compareTo(u.username);
     }
 
     public boolean isValid(String pass) {

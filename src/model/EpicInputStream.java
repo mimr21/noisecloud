@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 
 
+/** Classe que lê linhas de texto e bytes de ficheiros */
 public class EpicInputStream {
     private DataInputStream in;
     private BufferedReader reader;
@@ -28,14 +29,14 @@ public class EpicInputStream {
     }
 
     /** não bloqueia quando não há mais linhas para ler */
-    public String tryReadLine() throws IOException {
+    /*public String tryReadLine() throws IOException {
         String line = reader.readLine();
 
         if (line == null)
             reader = null;
 
         return line;
-    }
+    }*/
 
     public void readFileTo(File file) throws IOException {
         if (file.createNewFile()) {

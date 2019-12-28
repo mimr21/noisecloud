@@ -4,10 +4,7 @@ import exceptions.InvalidPasswordException;
 import exceptions.RemoteModelException;
 import exceptions.UserNotFoundException;
 import exceptions.UsernameAlreadyExistsException;
-import model.EpicInputStream;
-import model.EpicOutputStream;
-import model.IModel;
-import model.User;
+import model.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -30,48 +27,64 @@ class ServerWorker implements Runnable {
         try {
             EpicInputStream in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
             EpicOutputStream out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
-            String request, reply;
+            String request;
 
             while ((request = in.readLine()) != null && !request.equals("quit")) {
-
-                /*Debug*/
-                System.out.println("Client says: " + request);
-
-                String[] cmd = request.split(" ");
-
                 try {
-                    switch (cmd[0]) {
+                    switch (request) {
                         case "addUser":
-                            model.addUser(cmd[1], cmd[2]);
-                            reply = "";
+                            String username0 = in.readLine();
+                            String password0 = in.readLine();
+                            model.addUser(username0, password0);
+                            out.println(true);
                             break;
 
                         case "login":
-                            reply = model.login(cmd[1], cmd[2]) ? "" : "";
+                            String username1 = in.readLine();
+                            String password1 = in.readLine();
+                            boolean login = model.login(username1, password1);
+                            out.println(true);
+                            out.println(login);
                             break;
 
                         case "logout":
-                            reply = model.logout(cmd[1]) ? "" : "";
+                            String username2 = in.readLine();
+                            boolean logout = model.logout(username2);
+                            out.println(true);
+                            out.println(logout);
                             break;
 
-                        case "users":
+                        case "listUsers":
                             Collection<User> users = model.listUsers();
-                            reply = users.isEmpty() ? "" : users.toString();
+                            out.println(true);
+                            out.println(users.size());
+                            for (User user : users)
+                                out.println(user);
                             break;
 
                         case "upload":
-                            int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4]/*, cmd[5]*/);
-                            reply = "";
+                            String title = in.readLine();
+                            String artist = in.readLine();
+                            int year = Integer.parseInt(in.readLine());
+                            String[] tags = in.readLine().split(Cerealizable.ARRAY_SEPARATOR);
+                            String filename = in.readLine();
+
+                            File file = new File(Noisecloud.storagePath(filename));
+                            in.readFileTo(file);
+                            int id = model.upload(title, artist, year, tags, filename);
+                            out.println(true);
+                            out.println(id);
                             break;
 
                         default:
-                            reply = "Operação desconhecida.";
+                            out.println(false);
+                            out.println("Operação desconhecida.");
                     }
                 } catch (RemoteModelException | UsernameAlreadyExistsException
                         | UserNotFoundException | InvalidPasswordException | NumberFormatException e) {
-                    reply = e.getMessage();
+                    out.println(false);
+                    out.println(e.getMessage());
                 }
-                out.println(reply);
                 out.flush();
             }
         } catch (SocketException e) {

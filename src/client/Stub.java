@@ -1,15 +1,13 @@
 package client;
 
 import exceptions.RemoteModelException;
-import model.EpicInputStream;
-import model.EpicOutputStream;
-import model.IModel;
-import model.User;
+import model.*;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.TreeSet;
 
 
 // package-private
@@ -17,14 +15,12 @@ class Stub implements IModel {
     private Socket socket;
     private EpicInputStream in;
     private EpicOutputStream out;
-    private boolean login;
 
 
     public Stub(String host, int port) throws IOException {
         this.socket =  new Socket(host, port);
         this.in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
         this.out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
-        this.login = false;
     }
 
     public void end() {
@@ -37,104 +33,89 @@ class Stub implements IModel {
         }
     }
 
-    public void addUser(String name, String pass) throws RemoteModelException {
-        if (login) {
-            try {
-                out.println("addUser " + name + " " + pass);
-                out.flush();
+    public void addUser(String username, String password) throws RemoteModelException {
+        try {
+            out.println("addUser");
+            out.println(username);
+            out.println(password);
+            out.flush();
 
-                String s = in.readLine();
-
-                //return s;
-            } catch (IOException e) {
-                throw new RemoteModelException(e.getMessage());
-            }
-        } else {
-            throw new RemoteModelException("Login já realizado.");
+            if (!Boolean.parseBoolean(in.readLine()))
+                throw new RemoteModelException(in.readLine());
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
         }
     }
 
-    public boolean login(String name, String pass) throws RemoteModelException {
-        if (login) {
-            return true;
-        } else {
-            try {
-                out.println("login " + name + " " + pass);
-                out.flush();
+    public boolean login(String username, String password) throws RemoteModelException {
+        try {
+            out.println("login");
+            out.println(username);
+            out.println(password);
+            out.flush();
 
-                String s = in.readLine();
-
-                if (s.equals("Login com sucesso"))
-                    login = true;
-
-                //return s;
-                return false;
-            } catch (IOException e) {
-                throw new RemoteModelException(e.getMessage());
-            }
+            if (Boolean.parseBoolean(in.readLine()))
+                return Boolean.parseBoolean(in.readLine());
+            else
+                throw new RemoteModelException(in.readLine());
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
         }
     }
 
-    public boolean logout(String name) throws RemoteModelException {
-        String s;
+    public boolean logout(String username) throws RemoteModelException {
+        try {
+            out.println("logout");
+            out.println(username);
+            out.flush();
 
-        if (login) {
-            try {
-                out.println("logout " + name);
-                out.flush();
-
-                s = in.readLine();
-
-                if (s.equals("Logout com sucesso"))
-                    login = false;
-            } catch (IOException e) {
-                throw new RemoteModelException(e.getMessage());
-            }
-        } else {
-            s = "Impossível realizar a operação. Faça login primeiro.";
+            if (Boolean.parseBoolean(in.readLine()))
+                return Boolean.parseBoolean(in.readLine());
+            else
+                throw new RemoteModelException(in.readLine());
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
         }
-
-        //return s;
-        return false;
     }
 
     public Collection<User> listUsers() throws RemoteModelException {
-        String s;
+        try {
+            out.println("listUsers");
+            out.flush();
 
-        if (login) {
-            try {
-                out.println("users");
-                out.flush();
-
-                s = in.readLine();
-            } catch (IOException e) {
-                throw new RemoteModelException(e.getMessage());
+            if (Boolean.parseBoolean(in.readLine())) {
+                int size = Integer.parseInt(in.readLine());
+                Collection<User> users = new TreeSet<>();
+                while (size > 0) {
+                    users.add(User.descerealize(in.readLine()));
+                    --size;
+                }
+                return users;
+            } else {
+                throw new RemoteModelException(in.readLine());
             }
-        } else {
-            s = "Impossível realizar a operação. Faça login primeiro.";
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
         }
-
-        //return s;
-        return null;
     }
 
-    public int upload(String title, String artist, int year, String tags) throws RemoteModelException {
-        String s;
+    public int upload(String title, String artist, int year, String[] tags, String filepath) throws RemoteModelException {
+        try {
+            out.println("upload");
+            out.println(title);
+            out.println(artist);
+            out.println(year);
+            out.println(Cerealizable.cerealize(tags));
+            out.println(Noisecloud.getFilename(filepath));
+            out.sendFile(new File(filepath));
+            out.flush();
 
-        if (login) {
-            try {
-                out.println("addUser " + title + " " + artist + " " + year + " " + tags);
-                out.flush();
-
-                s = in.readLine();
-            } catch (IOException e) {
-                throw new RemoteModelException(e.getMessage());
-            }
-        } else {
-            s = "Impossível realizar a operação. Faça login primeiro.";
+            if (Boolean.parseBoolean(in.readLine()))
+                return Integer.parseInt(in.readLine());
+            else
+                throw new RemoteModelException(in.readLine());
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
         }
-
-        //return s;
-        return 0;
     }
 }

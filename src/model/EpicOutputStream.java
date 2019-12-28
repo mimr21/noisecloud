@@ -3,6 +3,7 @@ package model;
 import java.io.*;
 
 
+/** Classe que escreve linhas de texto e bytes de ficheiros */
 public class EpicOutputStream {
     private DataOutputStream out;
 
@@ -44,6 +45,10 @@ public class EpicOutputStream {
 
     public void println(float f) throws IOException {
         out.writeUTF(f + EOL);
+    }
+
+    public void println(Cerealizable c) throws IOException {
+        out.writeUTF(c.cerealize() + EOL);
     }
 
     public void sendFile(File file) throws IOException {

@@ -1,14 +1,10 @@
 package client;
 
-import exceptions.InvalidPasswordException;
-import exceptions.RemoteModelException;
-import exceptions.UserNotFoundException;
-import exceptions.UsernameAlreadyExistsException;
+import exceptions.*;
 import model.IModel;
 import model.User;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Collection;
 
 
@@ -42,16 +38,18 @@ public class Client {
                         output = users.isEmpty() ? "Não existem utilizadores." : users.toString();
                         break;
 
-                    case "upload":                                                      //upload name artist year tag1/tag2/tag3 ... file
-                        //String currentDirectory = System.getProperty("user.dir");       //tem de ter pelo menos uma tag
-                        //String path = currentDirectory + "\\" + cmd[1];
-                        //byte[] file = Files.readAllBytes(new File(path).toPath());
-                        int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4]);
-                        output = "Upload feito com sucesso. ID da música: " + id + ".";
+                    case "upload":      // upload title artist year tag1/tag2/tag3/... fi le pa th         // tem de ter pelo menos uma tag
+                        String filepath = concat(cmd, 5, cmd.length, " ").replace("\\", "/");
+                        if ((new File(filepath)).isFile()) {
+                            int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4].split("/"), filepath);
+                            output = "Upload feito com sucesso. ID da música: " + id + ".";
+                        } else {
+                            output = "Ficheiro inválido.";
+                        }
                         break;
 
                     default:
-                        output = "Operação não reconhecida. Insira novamente.";
+                        output = "Operação desconhecida. Insira novamente.";
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 output = "Dados incorretos. Insira novamente.";
@@ -63,5 +61,13 @@ public class Client {
         }
 
         model.end();
+    }
+
+    public static String concat(String[] array, int start, int end, String separator) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(array[start]);
+        for (int j = start+1; j < end; ++j)
+            sb.append(separator).append(array[j]);
+        return sb.toString();
     }
 }

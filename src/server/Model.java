@@ -73,17 +73,17 @@ class Model implements IModel {
         }
     }
 
-    public boolean logout(String name) throws UserNotFoundException {
+    public boolean logout(String username) throws UserNotFoundException {
         lockModel.lock();
         users.lock();
         lockModel.unlock();
 
-        if (!users.containsKey(name)) {
+        if (!users.containsKey(username)) {
             users.unlock();
             throw new UserNotFoundException("Utilizador não existente.");
         }
 
-        User u = users.get(name);
+        User u = users.get(username);
         u.lock();
         users.unlock();
 
@@ -112,7 +112,7 @@ class Model implements IModel {
         }
     }
 
-    public int upload(String title, String artist, int year, String tags) {
+    public int upload(String title, String artist, int year, String[] tags, String filename) {
         lockModel.lock();
         songs.lock();
         songID.lock();
@@ -121,8 +121,7 @@ class Model implements IModel {
         int id = songID.getAndIncrement();
         songID.unlock();
 
-        String[] t = tags.split("/");
-        Song s = new Song(id, title, artist, year, t, 0);
+        Song s = new Song(id, title, artist, year, tags, 0, filename);
         songs.put(id, s);
 
         songs.unlock();
