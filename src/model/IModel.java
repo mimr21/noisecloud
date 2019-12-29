@@ -2,11 +2,12 @@ package model;
 
 import exceptions.*;
 
+import java.io.IOException;
 import java.util.Collection;
 
 
 public interface IModel {
-    void end();
+    void end() throws IOException;
 
     void addUser(String username, String password) throws UsernameAlreadyExistsException, RemoteModelException;
 

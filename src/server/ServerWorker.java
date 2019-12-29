@@ -1,24 +1,22 @@
 package server;
 
-import exceptions.InvalidPasswordException;
-import exceptions.RemoteModelException;
-import exceptions.UserNotFoundException;
-import exceptions.UsernameAlreadyExistsException;
+import exceptions.*;
 import model.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Collection;
 
 
 // package-private
 class ServerWorker implements Runnable {
-    private Socket socket;
-    private IModel model;
+    private final int id;
+    private final Socket socket;
+    private final IModel model;
 
 
-    public ServerWorker(Socket socket, IModel model) {
+    public ServerWorker(int id, Socket socket, IModel model) {
+        this.id = id;
         this.socket = socket;
         this.model = model;
     }
@@ -87,18 +85,21 @@ class ServerWorker implements Runnable {
                 }
                 out.flush();
             }
-        } catch (SocketException e) {
-            // Client closed
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            printerr(e);
         } finally {
             try {
                 socket.shutdownOutput();
                 socket.shutdownInput();
                 socket.close();
             } catch (IOException e) {
-                System.err.println(e.getMessage());
+                printerr(e);
             }
+            System.out.println("Client #" + id + " saiu");
         }
+    }
+
+    public void printerr(Exception e) {
+        System.out.println("Client #" + id + ": " + e.toString() + ": " + e.getMessage());
     }
 }

@@ -5,7 +5,7 @@ import java.io.*;
 
 /** Classe que escreve linhas de texto e bytes de ficheiros */
 public class EpicOutputStream {
-    private DataOutputStream out;
+    private final DataOutputStream out;
 
     private static final String EOL = "\n";
     private static final int FILE_BUFFER_SIZE = 8192;       // == 8*1024 == 8KB

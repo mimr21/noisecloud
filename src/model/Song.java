@@ -13,7 +13,7 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     private int downloads;
     private String filename;
 
-    private ReentrantLock lock;
+    private final ReentrantLock lock;
 
 
     public Song(int id, String title, String artist, int year, String[] tags, int downloads, String filename) {
@@ -52,7 +52,6 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     public int getDownloads() {return this.downloads;}
     public String getFilename() {return filename;}
 
-    //public void setID(int id) {this.id = id;}
     public void setTitle(String t) {this.title = t;}
     public void setArtist(String a) {this.artist = a;}
     public void setYear(int y) {this.year = y;}
@@ -65,13 +64,7 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         if (o == null || this.getClass() != o.getClass()) return false;
 
         Song s = (Song) o;
-        return this.id == s.id /*&&
-                this.name.equals(m.getName()) &&
-                this.artist.equals(m.getArtist()) &&
-                this.year == m.getYear() &&
-                this.tags.equals(m.getTags()) &&
-                this.downloads == m.getDownloads()
-                this.music.equals(m.getMusic())*/;
+        return this.id == s.id;
     }
 
     public Song clone() {return new Song(this);}

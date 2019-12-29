@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ID implements Lockable {
     private int value;
-    private ReentrantLock lock;
+    private final ReentrantLock lock;
 
     private static final int DEFAULT_INITIAL_VALUE = 0;
 

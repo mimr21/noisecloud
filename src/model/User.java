@@ -4,11 +4,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class User implements Lockable, Cerealizable, Comparable<User> {
-    private String username;
+    private final String username;
     private String password;
     private boolean log;
 
-    private ReentrantLock lock;
+    private final ReentrantLock lock;
 
 
     public User(String username, String password) {
@@ -41,7 +41,6 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     public String getPassword() {return this.password;}
     public boolean getLog() {return this.log;}
 
-    public void setUsername(String u) {this.username = u;}
     public void setPassword(String p) {this.password = p;}
     public void setLog(boolean l) {this.log = l;}
 
@@ -50,7 +49,7 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
         if (o == null || this.getClass() != o.getClass()) return false;
 
         User u = (User) o;
-        return this.username.equals(u.username)/* && this.password.equals(u.password)*/;
+        return this.username.equals(u.username);
     }
 
     public User clone() {return new User(this);}

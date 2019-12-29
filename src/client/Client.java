@@ -9,65 +9,168 @@ import java.util.Collection;
 
 
 public class Client {
-    public static void main(String[] args) throws IOException {
-        IModel model = new Stub("127.0.0.1", 12345);
+    private final IModel model;
+    private final View view;
+    private final BufferedReader stdin;
 
-        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
+    private Client() throws IOException {
+        model = new Stub("localhost", 12345);
+        view = new View();
+        stdin = new BufferedReader(new InputStreamReader(System.in));
+    }
+
+    public static void main(String[] args) {
+        Client client;
+
+        try {
+            client = new Client();
+        } catch (IOException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return;
+        }
+
+        client.run();
+    }
+
+    private void run() {
+        view.logo();
+        System.out.println();
+
+        try {
+            login_menu();
+        } catch (IOException e) {
+            view.err(e);
+        }
+
+        try {
+            model.end();
+        } catch (IOException e) {
+            view.err(e);
+        }
+    }
+
+    private void login_menu() throws IOException {
+        boolean cont = true;
+
+        while (cont) {
+            view.login_menu();
+            String username, password;
+            switch (stdin.readLine()) {
+                case "1":
+                    System.out.print("Nome de utilizador: ");
+                    username = stdin.readLine();
+                    System.out.print("          Password: ");
+                    password = stdin.readLine();
+                    try {
+                        model.login(username, password);
+                        main_menu();
+                    } catch (UserNotFoundException | InvalidPasswordException | RemoteModelException e) {
+                        view.err(e);
+                    }
+                    break;
+                case "2":
+                    System.out.print(" Nome de utilizador: ");
+                    username = stdin.readLine();
+                    System.out.print("           Password: ");
+                    password = stdin.readLine();
+                    System.out.print("Confirme a password: ");
+                    String password2 = stdin.readLine();
+                    if (password.equals(password2)) {
+                        try {
+                            model.addUser(username, password);
+                            System.out.println("Conta criada");
+                        } catch (UsernameAlreadyExistsException | RemoteModelException e) {
+                            view.err(e);
+                        }
+                    } else {
+                        view.err("Passwords diferentes");
+                    }
+                    break;
+                case "3":
+                    cont = false;
+                    break;
+                default:
+                    view.err("Opção inválida");
+            }
+        }
+    }
+
+    public void main_menu() throws IOException {
+        boolean cont = true;
+
+        while (cont) {
+            view.main_menu();
+            switch (stdin.readLine()) {
+                case "1":
+                case "2":
+                    cont = false;
+                    break;
+                default:
+                    view.err("Opção inválida");
+            }
+        }
+    }
+
+
+
+    ///////////
+    //  OLD  //
+    ///////////
+
+    public void dunno() throws IOException {
         String input, output;
-
         while (!(input = stdin.readLine()).equals("quit")) {
             String[] cmd = input.split(" ");
             try {
                 switch (cmd[0]) {
                     case "adicionar":
                         model.addUser(cmd[1], cmd[2]);
-                        output = "Utilizador adicionado com sucesso.";
+                        output = "Utilizador adicionado com sucesso";
                         break;
 
                     case "login":
-                        output = model.login(cmd[1], cmd[2]) ? "Login com sucesso." : "Login já realizado.";
+                        output = model.login(cmd[1], cmd[2]) ? "Login com sucesso" : "Login já realizado";
                         break;
 
                     case "logout":
-                        output = model.logout(cmd[1]) ? "Logout com sucesso." : "Logout já realizado.";
+                        output = model.logout(cmd[1]) ? "Logout com sucesso" : "Logout já realizado";
                         break;
 
                     case "listar":
                         Collection<User> users = model.listUsers();
-                        output = users.isEmpty() ? "Não existem utilizadores." : users.toString();
+                        output = users.isEmpty() ? "Não existem utilizadores" : users.toString();
                         break;
 
                     case "upload":      // upload title artist year tag1/tag2/tag3/... fi le pa th         // tem de ter pelo menos uma tag
-                        String filepath = concat(cmd, 5, cmd.length, " ").replace("\\", "/");
+                        String filepath = concat(cmd).replace("\\", "/");
                         if ((new File(filepath)).isFile()) {
                             int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4].split("/"), filepath);
-                            output = "Upload feito com sucesso. ID da música: " + id + ".";
+                            output = "Upload feito com sucesso. ID da música: " + id;
                         } else {
-                            output = "Ficheiro inválido.";
+                            output = "Ficheiro inválido";
                         }
                         break;
 
                     default:
-                        output = "Operação desconhecida. Insira novamente.";
+                        output = "Operação desconhecida. Insira novamente";
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-                output = "Dados incorretos. Insira novamente.";
+                output = "Dados incorretos. Insira novamente";
             } catch (RemoteModelException | InvalidPasswordException | UserNotFoundException | UsernameAlreadyExistsException e) {
                 output = e.getMessage();
             }
 
             System.out.println(output);
         }
-
-        model.end();
     }
 
-    public static String concat(String[] array, int start, int end, String separator) {
+    private static String concat(String[] array) {
         StringBuilder sb = new StringBuilder();
-        sb.append(array[start]);
-        for (int j = start+1; j < end; ++j)
-            sb.append(separator).append(array[j]);
+        sb.append(array[5]);
+        int end = array.length;
+        for (int j = 6; j < end; ++j)
+            sb.append(" ").append(array[j]);
         return sb.toString();
     }
 }

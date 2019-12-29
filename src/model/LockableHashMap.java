@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class LockableHashMap<K, V> extends HashMap<K, V> implements LockableMap<K, V> {
-    private ReentrantLock lock = new ReentrantLock(true);
+    private final ReentrantLock lock = new ReentrantLock(true);
 
 
     public LockableHashMap() {

@@ -12,25 +12,23 @@ import java.util.TreeSet;
 
 // package-private
 class Stub implements IModel {
-    private Socket socket;
-    private EpicInputStream in;
-    private EpicOutputStream out;
+    private final Socket socket;
+    private final EpicInputStream in;
+    private final EpicOutputStream out;
 
 
     public Stub(String host, int port) throws IOException {
-        this.socket =  new Socket(host, port);
-        this.in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
-        this.out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
+        socket = new Socket(host, port);
+        in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
+        out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
     }
 
-    public void end() {
-        try {
-            socket.shutdownOutput();
-            socket.shutdownInput();
-            socket.close();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+    public void end() throws IOException {
+        out.println("quit");
+        out.flush();
+        socket.shutdownOutput();
+        socket.shutdownInput();
+        socket.close();
     }
 
     public void addUser(String username, String password) throws RemoteModelException {

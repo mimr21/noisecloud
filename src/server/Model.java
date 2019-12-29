@@ -11,17 +11,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 // package-private
 class Model implements IModel {
-    private LockableMap<String, User> users;        // (username, User)
-    private LockableMap<Integer, Song> songs;       // (id, Song)
-    private ID songID;                              // next song id
-    private ReentrantLock lockModel;
+    private final LockableMap<String, User> users;        // (username, User)
+    private final LockableMap<Integer, Song> songs;       // (id, Song)
+    private final ID songID;                              // next song id
+    private final ReentrantLock lockModel;
 
 
     public Model() {
-        this.songID = new ID();
-        this.users = new LockableHashMap<>();
-        this.songs = new LockableHashMap<>();
-        this.lockModel = new ReentrantLock(true);
+        songID = new ID();
+        users = new LockableHashMap<>();
+        songs = new LockableHashMap<>();
+        lockModel = new ReentrantLock(true);
     }
 
     public void end() {}
