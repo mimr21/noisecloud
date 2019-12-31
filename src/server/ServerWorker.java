@@ -2,6 +2,7 @@ package server;
 
 import exceptions.*;
 import model.*;
+import static model.Noisecloud.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -67,7 +68,7 @@ class ServerWorker implements Runnable {
                             String[] tags = in.readLine().split(Cerealizable.ARRAY_SEPARATOR);
                             String filename = in.readLine();
 
-                            File file = new File(Noisecloud.storagePath(filename));
+                            File file = new File(storagePath(filename));
                             in.readFileTo(file);
                             int id = model.upload(title, artist, year, tags, filename);
                             out.println(true);

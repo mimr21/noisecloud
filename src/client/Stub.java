@@ -2,10 +2,10 @@ package client;
 
 import exceptions.RemoteModelException;
 import model.*;
+import static model.Noisecloud.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -104,7 +104,7 @@ class Stub implements IModel {
             out.println(artist);
             out.println(year);
             out.println(Cerealizable.cerealize(tags));
-            out.println(Noisecloud.getFilename(filepath));
+            out.println(getFilename(filepath));
             out.sendFile(new File(filepath));
             out.flush();
 

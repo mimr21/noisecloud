@@ -1,14 +1,20 @@
 package model;
 
+
 public class Noisecloud {
+    private static final String SEPARATOR;
+    private static final String ALT_SEPARATOR;
     private static final String SERVER_STORAGE_PATH;
     private static final String CLIENT_DOWNLOADS_PATH;
 
 
     static {
-        String project_path = System.getProperty("user.dir").replace("\\", "/");
-        SERVER_STORAGE_PATH = project_path + "/_server_storage/";
-        CLIENT_DOWNLOADS_PATH = project_path + "/_client_downloads/";
+        SEPARATOR = System.getProperty("file.separator");
+        ALT_SEPARATOR = SEPARATOR.equals("\\") ? "/" : "\\";
+
+        String dir = System.getProperty("user.dir") + SEPARATOR;
+        SERVER_STORAGE_PATH = dir + "_server_storage" + SEPARATOR;
+        CLIENT_DOWNLOADS_PATH = dir + "_client_downloads" + SEPARATOR;
     }
 
 
@@ -24,7 +30,14 @@ public class Noisecloud {
     }
 
     public static String getFilename(String filepath) {
-        int i = filepath.lastIndexOf("/");
-        return filepath.substring(i+1);
+        int i1 = filepath.lastIndexOf(SEPARATOR);
+        int i2 = filepath.lastIndexOf(ALT_SEPARATOR);
+        int i = Math.max(i1, i2);
+
+        return filepath.substring(i + 1);
+    }
+
+    public static String normalizePath(String filepath) {
+        return filepath.replace(ALT_SEPARATOR, SEPARATOR);
     }
 }

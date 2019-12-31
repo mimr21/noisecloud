@@ -8,28 +8,25 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     private String password;
     private boolean log;
 
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock(true);
 
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.log = false;
-        this.lock = new ReentrantLock(true);
     }
 
     public User(User u) {
         this.username = u.username;
         this.password = u.password;
         this.log = u.log;
-        this.lock = new ReentrantLock(true);
     }
 
     private User(String username, String password, boolean log) {
         this.username = username;
         this.password = password;
         this.log = log;
-        this.lock = new ReentrantLock(true);
     }
 
     public static User descerealize(String s) {
@@ -75,9 +72,11 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     }
 
     public String cerealize() {
+        String separator = Cerealizable.ARGS_SEPARATOR;
+
         StringBuilder sb = new StringBuilder();
-        sb.append(username).append(Cerealizable.ARGS_SEPARATOR)
-                .append(password).append(Cerealizable.ARGS_SEPARATOR)
+        sb.append(username).append(separator)
+                .append(password).append(separator)
                 .append(log);
         return sb.toString();
     }

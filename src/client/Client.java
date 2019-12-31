@@ -3,6 +3,7 @@ package client;
 import exceptions.*;
 import model.IModel;
 import model.User;
+import static model.Noisecloud.*;
 
 import java.io.*;
 import java.util.Collection;
@@ -54,7 +55,9 @@ public class Client {
         boolean cont = true;
 
         while (cont) {
+            System.out.println();
             view.login_menu();
+
             String username, password;
             switch (stdin.readLine()) {
                 case "1":
@@ -74,17 +77,11 @@ public class Client {
                     username = stdin.readLine();
                     System.out.print("           Password: ");
                     password = stdin.readLine();
-                    System.out.print("Confirme a password: ");
-                    String password2 = stdin.readLine();
-                    if (password.equals(password2)) {
-                        try {
-                            model.addUser(username, password);
-                            System.out.println("Conta criada");
-                        } catch (UsernameAlreadyExistsException | RemoteModelException e) {
-                            view.err(e);
-                        }
-                    } else {
-                        view.err("Passwords diferentes");
+                    try {
+                        model.addUser(username, password);
+                        System.out.println("Conta criada");
+                    } catch (UsernameAlreadyExistsException | RemoteModelException e) {
+                        view.err(e);
                     }
                     break;
                 case "3":
@@ -100,10 +97,38 @@ public class Client {
         boolean cont = true;
 
         while (cont) {
+            System.out.println();
             view.main_menu();
+
             switch (stdin.readLine()) {
                 case "1":
+                    /*System.out.print("    Título: ");
+                    String title = stdin.readLine();
+                    System.out.print("Intérprete: ");
+                    String artist = stdin.readLine();
+                    System.out.print("       Ano: ");
+                    int year;
+                    try {
+                        year = Integer.parseInt(stdin.readLine());
+                    } catch (NumberFormatException e) {
+                        view.err(e);
+                        continue;
+                    }
+                    System.out.print("      Tags: ");
+                    String[] tags = stdin.readLine().split("/");*/
+                    System.out.print("  Ficheiro: ");
+                    String filepath = normalizePath(stdin.readLine());
+
+                    try {
+                        int id = model.upload("jose", "manel", 1900, new String[]{"fixe"}, filepath);
+                        System.out.println("Upload feito com sucesso. ID da música: " + id);
+                    } catch (RemoteModelException e) {
+                        view.err(e);
+                    }
+                    break;
                 case "2":
+                    break;
+                case "3":
                     cont = false;
                     break;
                 default:
