@@ -116,4 +116,26 @@ class Stub implements IModel {
             throw new RemoteModelException(e.getMessage());
         }
     }
+
+    public Collection<Song> search(String tag) throws RemoteModelException {
+        try {
+            out.println("search");
+            out.println(tag);
+            out.flush();
+
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
+                Collection<Song> songs = new TreeSet<>();
+                while (size > 0) {
+                    songs.add(Song.descerealize(in.readStringArray()));
+                    --size;
+                }
+                return songs;
+            } else {
+                throw new RemoteModelException(in.readLine());
+            }
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
 }

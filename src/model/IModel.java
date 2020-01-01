@@ -18,4 +18,6 @@ public interface IModel {
     Collection<User> listUsers() throws RemoteModelException;
 
     int upload(String title, String artist, int year, String[] tags, String filename) throws RemoteModelException;
+
+    Collection<Song> search(String tag) throws RemoteModelException;
 }

@@ -75,6 +75,15 @@ class ServerWorker implements Runnable {
                             out.println(id);
                             break;
 
+                        case "search":
+                            String tag = in.readLine();
+                            Collection<Song> songs = model.search(tag);
+                            out.println(true);
+                            out.println(songs.size());
+                            for (Song song : songs)
+                                out.print(song.cerealize());
+                            break;
+
                         default:
                             out.println(false);
                             out.println("Operação desconhecida.");

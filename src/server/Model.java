@@ -3,7 +3,9 @@ package server;
 import exceptions.*;
 import model.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 // package-private
@@ -112,5 +114,30 @@ class Model implements IModel {
         songs.unlock();
 
         return id;
+    }
+
+    public Collection<Song> search(String tag) {
+        Song[] songs_aux = new Song[songs.size()];
+        List<Song> match = new ArrayList<>();
+        int i;
+
+        songs.lock();
+        for(i = 0; i <= songs.size(); i++){
+            Song s = songs.get(i);
+            s.lock();
+            songs_aux[i] = new Song(s);
+            s.unlock();
+        }
+        songs.unlock();
+
+        for(i = 0; i <= songs_aux.length; i++) {
+            String[] t = songs_aux[i].getTags();
+            for (int j = 0; j <= t.length; j++)
+                if (t[j].equals(tag)){
+                    match.add(songs_aux[i]);
+                    break;
+                }
+        }
+        return match;
     }
 }
