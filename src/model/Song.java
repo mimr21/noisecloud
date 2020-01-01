@@ -123,4 +123,15 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         }
         return r;
     }
+
+    public void incrementDownloads() {
+        ++downloads;
+    }
+
+    public boolean containsTag(String tag) {
+        for (String t : tags)
+            if (t.equals(tag))
+                return true;
+        return false;
+    }
 }

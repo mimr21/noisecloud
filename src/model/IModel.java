@@ -16,9 +16,13 @@ public interface IModel {
 
     boolean logout(String username) throws UserNotFoundException, RemoteModelException;
 
-    Collection<User> listUsers() throws RemoteModelException;
-
     int upload(String title, String artist, int year, String[] tags, String filename) throws RemoteModelException;
 
-    Collection<Song> search(String tag) throws NoSongsAvailableException, RemoteModelException;
+    Song download(int id) throws SongNotFoundException, RemoteModelException;
+
+    Collection<User> listUsers() throws RemoteModelException;
+
+    Collection<Song> listSongs() throws RemoteModelException;
+
+    Collection<Song> search(String tag) throws RemoteModelException;
 }

@@ -1,6 +1,5 @@
 package client;
 
-import exceptions.NoSongsAvailableException;
 import exceptions.RemoteModelException;
 import model.*;
 import static model.Noisecloud.*;
@@ -77,6 +76,44 @@ class Stub implements IModel {
         }
     }
 
+    public int upload(String title, String artist, int year, String[] tags, String filepath) throws RemoteModelException {
+        try {
+            out.println("upload");
+            out.println(title);
+            out.println(artist);
+            out.println(year);
+            out.print(tags);
+            out.println(getFilename(filepath));
+            out.print(new File(filepath));
+            out.flush();
+
+            if (in.readLineToBoolean())
+                return in.readLineToInt();
+            else
+                throw new RemoteModelException(in.readLine());
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
+
+    public Song download(int id) throws RemoteModelException {
+        try {
+            out.println("download");
+            out.println(id);
+            out.flush();
+
+            if (in.readLineToBoolean()) {
+                Song song = Song.descerealize(in.readStringArray());
+                in.readFile(new File(downloadsPath(song.getFilename())));
+                return song;
+            } else {
+                throw new RemoteModelException(in.readLine());
+            }
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
+
     public Collection<User> listUsers() throws RemoteModelException {
         try {
             out.println("listUsers");
@@ -98,21 +135,22 @@ class Stub implements IModel {
         }
     }
 
-    public int upload(String title, String artist, int year, String[] tags, String filepath) throws RemoteModelException {
+    public Collection<Song> listSongs() throws RemoteModelException {
         try {
-            out.println("upload");
-            out.println(title);
-            out.println(artist);
-            out.println(year);
-            out.print(tags);
-            out.println(getFilename(filepath));
-            out.print(new File(filepath));
+            out.println("listSongs");
             out.flush();
 
-            if (in.readLineToBoolean())
-                return in.readLineToInt();
-            else
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
+                Collection<Song> songs = new TreeSet<>();
+                while (size > 0) {
+                    songs.add(Song.descerealize(in.readStringArray()));
+                    --size;
+                }
+                return songs;
+            } else {
                 throw new RemoteModelException(in.readLine());
+            }
         } catch (IOException e) {
             throw new RemoteModelException(e.getMessage());
         }

@@ -22,9 +22,10 @@ class View {
 
     public void main_menu() {
         out.println("1) Upload");
-        out.println("2) Utilizadores");
-        out.println("3) Procurar");
-        out.println("4) Log out");
+        out.println("2) Todas as músicas");
+        out.println("3) Procurar músicas");
+        out.println("4) Utilizadores");
+        out.println("5) Log out");
     }
 
     public void linebreak(int n) {

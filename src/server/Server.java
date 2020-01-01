@@ -12,18 +12,27 @@ public class Server {
         System.out.println("A iniciar...");
         ServerSocket sSock = new ServerSocket(12345);
 
-        System.out.println("A carregar dados...");
         IModel model = new Model();
 
         int id = 0;
         System.out.println("À espera de clients...");
+
         while (true) {
             Socket clSock = sSock.accept();
-            System.out.println("Client #" + ++id + " entrou");
 
-            Runnable r = new ServerWorker(id, clSock, model);
-            Thread t = new Thread(r);
-            t.start();
+            try {
+                Runnable r = new ServerWorker(id+1, clSock, model);
+                Thread t = new Thread(r);
+                t.start();
+
+                System.out.println("Client #" + ++id + ": entrou");
+            } catch (IOException e1) {
+                try {
+                    clSock.shutdownOutput();
+                    clSock.shutdownInput();
+                    clSock.close();
+                } catch (IOException e2) {}
+            }
         }
     }
 }

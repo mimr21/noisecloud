@@ -16,12 +16,6 @@ public class Client {
     private final BufferedReader stdin;
 
 
-    private Client() throws IOException {
-        model = new Stub("localhost", 12345);
-        view = new View();
-        stdin = new BufferedReader(new InputStreamReader(System.in));
-    }
-
     public static void main(String[] args) {
         Client client;
 
@@ -33,6 +27,13 @@ public class Client {
         }
 
         client.run();
+    }
+
+
+    private Client() throws IOException {
+        model = new Stub("localhost", 12345);
+        view = new View();
+        stdin = new BufferedReader(new InputStreamReader(System.in));
     }
 
     private void run() {
@@ -52,6 +53,8 @@ public class Client {
         }
     }
 
+    // Menu de Log In
+
     private void login_menu() throws IOException {
         boolean cont = true;
 
@@ -59,42 +62,54 @@ public class Client {
             System.out.println();
             view.login_menu();
 
-            String username, password;
             switch (stdin.readLine()) {
                 case "1":
-                    System.out.print("Nome de utilizador: ");
-                    username = stdin.readLine();
-                    System.out.print("          Password: ");
-                    password = stdin.readLine();
-                    try {
-                        model.login(username, password);
-                        main_menu();
-                    } catch (UserNotFoundException | InvalidPasswordException | RemoteModelException e) {
-                        view.err(e);
-                    }
+                    entrar();
                     break;
+
                 case "2":
-                    System.out.print(" Nome de utilizador: ");
-                    username = stdin.readLine();
-                    System.out.print("           Password: ");
-                    password = stdin.readLine();
-                    try {
-                        model.addUser(username, password);
-                        System.out.println("Conta criada");
-                    } catch (UsernameAlreadyExistsException | RemoteModelException e) {
-                        view.err(e);
-                    }
+                    criar_conta();
                     break;
-                case "3":
+
+                case "3":   // sair
                     cont = false;
                     break;
+
                 default:
                     view.err("Opção inválida");
             }
         }
     }
 
-    public void main_menu() throws IOException {
+    private void entrar() throws IOException {
+        System.out.print("Nome de utilizador: ");
+        String username = stdin.readLine();
+        System.out.print("          Password: ");
+        String password = stdin.readLine();
+        try {
+            model.login(username, password);
+            main_menu();
+        } catch (UserNotFoundException | InvalidPasswordException | RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void criar_conta() throws IOException {
+        System.out.print(" Nome de utilizador: ");
+        String username = stdin.readLine();
+        System.out.print("           Password: ");
+        String password = stdin.readLine();
+        try {
+            model.addUser(username, password);
+            System.out.println("Conta criada");
+        } catch (UsernameAlreadyExistsException | RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    // Menu principal
+
+    private void main_menu() throws IOException {
         boolean cont = true;
 
         while (cont) {
@@ -103,117 +118,94 @@ public class Client {
 
             switch (stdin.readLine()) {
                 case "1":
-                    System.out.print("                  Título: ");
-                    String title = stdin.readLine();
-                    System.out.print("              Intérprete: ");
-                    String artist = stdin.readLine();
-                    System.out.print("                     Ano: ");
-                    int year;
-                    try {
-                        year = Integer.parseInt(stdin.readLine());
-                    } catch (NumberFormatException e) {
-                        view.err(e);
-                        continue;
-                    }
-                    System.out.print("Tags (separadas por '/'): ");
-                    String[] tags = stdin.readLine().split("/");
-                    System.out.print("                Ficheiro: ");
-                    String filepath = normalizePath(stdin.readLine());
+                    upload();
+                    break;
 
-                    try {
-                        int id = model.upload(title, artist, year, tags, filepath);
-                        System.out.println("Upload feito com sucesso. ID da música: " + id);
-                    } catch (RemoteModelException e) {
-                        view.err(e);
-                    }
-                    break;
                 case "2":
-                    try {
-                        Collection<User> users = model.listUsers();
-                        for (User user : users)
-                            System.out.println(user.getUsername());
-                    } catch (RemoteModelException e) {
-                        view.err(e);
-                    }
+                    todas_as_musicas();
                     break;
+
                 case "3":
-                    System.out.println("Tag: ");
-                    String t = stdin.readLine();
-                    try {
-                        Collection<Song> songs = model.search(t);
-                        for (Song song : songs)
-                            System.out.println(song.toString());
-                    } catch (RemoteModelException | NoSongsAvailableException e) {
-                        view.err(e);
-                    }
+                    procurar_musicas();
+                    break;
+
                 case "4":
+                    todos_os_utilizadores();
+                    break;
+
+                case "5":   // log out
                     cont = false;
                     break;
+
                 default:
                     view.err("Opção inválida");
             }
         }
     }
 
+    private void upload() throws IOException {
+        System.out.print("                  Título: ");
+        String title = stdin.readLine();
+        System.out.print("              Intérprete: ");
+        String artist = stdin.readLine();
+        System.out.print("                     Ano: ");
+        int year;
+        try {
+            year = Integer.parseInt(stdin.readLine());
+        } catch (NumberFormatException e) {
+            view.err(e);
+            return;
+        }
+        System.out.print("Tags (separadas por '/'): ");
+        String[] tags = stdin.readLine().split("/");
+        System.out.print("                Ficheiro: ");
+        String filepath = normalizePath(stdin.readLine());
 
-
-    ///////////
-    //  OLD  //
-    ///////////
-
-    public void dunno() throws IOException {
-        String input, output;
-        while (!(input = stdin.readLine()).equals("quit")) {
-            String[] cmd = input.split(" ");
-            try {
-                switch (cmd[0]) {
-                    case "adicionar":
-                        model.addUser(cmd[1], cmd[2]);
-                        output = "Utilizador adicionado com sucesso";
-                        break;
-
-                    case "login":
-                        output = model.login(cmd[1], cmd[2]) ? "Login com sucesso" : "Login já realizado";
-                        break;
-
-                    case "logout":
-                        output = model.logout(cmd[1]) ? "Logout com sucesso" : "Logout já realizado";
-                        break;
-
-                    case "listar":
-                        Collection<User> users = model.listUsers();
-                        output = users.isEmpty() ? "Não existem utilizadores" : users.toString();
-                        break;
-
-                    case "upload":      // upload title artist year tag1/tag2/tag3/... fi le pa th         // tem de ter pelo menos uma tag
-                        String filepath = concat(cmd).replace("\\", "/");
-                        if ((new File(filepath)).isFile()) {
-                            int id = model.upload(cmd[1], cmd[2], Integer.parseInt(cmd[3]), cmd[4].split("/"), filepath);
-                            output = "Upload feito com sucesso. ID da música: " + id;
-                        } else {
-                            output = "Ficheiro inválido";
-                        }
-                        break;
-
-                    default:
-                        output = "Operação desconhecida. Insira novamente";
-                }
-            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-                output = "Dados incorretos. Insira novamente";
-            } catch (RemoteModelException | InvalidPasswordException | UserNotFoundException | UsernameAlreadyExistsException e) {
-                output = e.getMessage();
-            }
-
-            System.out.println(output);
+        try {
+            int id = model.upload(title, artist, year, tags, filepath);
+            System.out.println("Upload feito com sucesso. ID da música: " + id);
+        } catch (RemoteModelException e) {
+            view.err(e);
         }
     }
 
-    private static String concat(String[] array) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(array[5]);
-        int end = array.length;
-        for (int j = 6; j < end; ++j)
-            sb.append(" ").append(array[j]);
-        return sb.toString();
+    private void todas_as_musicas() {
+        try {
+            Collection<Song> songs = model.listSongs();
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas");
+            } else {
+                for (Song song : songs)
+                    System.out.println(song.toString());
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void procurar_musicas() throws IOException {
+        System.out.print("Tag: ");
+        String tag = stdin.readLine();
+        try {
+            Collection<Song> songs = model.search(tag);
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas com a tag '" + tag + "'");
+            } else {
+                for (Song song : songs)
+                    System.out.println(song.toString());
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void todos_os_utilizadores() {
+        try {
+            Collection<User> users = model.listUsers();
+            for (User user : users)
+                System.out.println(user.getUsername());
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
     }
 }

@@ -3,9 +3,9 @@ package server;
 import exceptions.*;
 import model.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 // package-private
@@ -71,11 +71,12 @@ class Model implements IModel {
 
         if (!users.containsKey(username)) {
             users.unlock();
-            throw new UserNotFoundException("Utilizador não existente.");
+            throw new UserNotFoundException(username);
         }
 
         User u = users.get(username);
         u.lock();
+
         users.unlock();
 
         boolean r;
@@ -89,16 +90,6 @@ class Model implements IModel {
         u.unlock();
 
         return r;
-    }
-
-    public Collection<User> listUsers() {
-        users.lock();
-
-        try {
-            return users.values();
-        } finally {
-            users.unlock();
-        }
     }
 
     public int upload(String title, String artist, int year, String[] tags, String filename) {
@@ -116,33 +107,86 @@ class Model implements IModel {
         return id;
     }
 
-    public Collection<Song> search(String tag) throws NoSongsAvailableException{
-        Song[] songs_aux = new Song[songs.size()];
-        List<Song> match = new ArrayList<>();
-        int i;
-
+    public Song download(int id) throws SongNotFoundException {
         songs.lock();
 
-        if (songs.size() == 0) {
+        if (!songs.containsKey(id)) {
             songs.unlock();
-            throw new NoSongsAvailableException("Não existem músicas na biblioteca.");
+            throw new SongNotFoundException(id);
         }
-        for(i = 0; i <= songs.size(); i++){
-            Song s = songs.get(i);
-            s.lock();
-            songs_aux[i] = new Song(s);
-            s.unlock();
-        }
+
+        Song song = songs.get(id);
+        song.lock();
+
         songs.unlock();
 
-        for(i = 0; i <= songs_aux.length; i++) {
-            String[] t = songs_aux[i].getTags();
-            for (int j = 0; j <= t.length; j++)
-                if (t[j].equals(tag)){
-                    match.add(songs_aux[i]);
-                    break;
-                }
+        song.incrementDownloads();
+
+        try {
+            return song.clone();
+        } finally {
+            song.unlock();
         }
+    }
+
+    public Collection<User> listUsers() {
+        users.lock();
+
+        Collection<User> users_aux = users.values();
+
+        for (User user : users_aux)
+            user.lock();
+
+        users.unlock();
+
+        Set<User> r = new TreeSet<>();
+
+        for (User user : users_aux) {
+            r.add(user.clone());
+            user.unlock();
+        }
+
+        return r;
+    }
+
+    public Collection<Song> listSongs() {
+        songs.lock();
+
+        Collection<Song> songs_aux = songs.values();
+
+        for (Song song : songs_aux)
+            song.lock();
+
+        songs.unlock();
+
+        Set<Song> r = new TreeSet<>();
+
+        for (Song song : songs_aux) {
+            r.add(song.clone());
+            song.unlock();
+        }
+
+        return r;
+    }
+
+    public Collection<Song> search(String tag) {
+        songs.lock();
+
+        Collection<Song> songs_aux = songs.values();
+
+        for (Song song : songs_aux)
+            song.lock();
+
+        songs.unlock();
+
+        Set<Song> match = new TreeSet<>();
+
+        for (Song song : songs_aux) {
+            if (song.containsTag(tag))
+                match.add(song.clone());
+            song.unlock();
+        }
+
         return match;
     }
 }
