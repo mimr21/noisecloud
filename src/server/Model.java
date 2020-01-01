@@ -116,12 +116,17 @@ class Model implements IModel {
         return id;
     }
 
-    public Collection<Song> search(String tag) {
+    public Collection<Song> search(String tag) throws NoSongsAvailableException{
         Song[] songs_aux = new Song[songs.size()];
         List<Song> match = new ArrayList<>();
         int i;
 
         songs.lock();
+
+        if (songs.size() == 0) {
+            songs.unlock();
+            throw new NoSongsAvailableException("Não existem músicas na biblioteca.");
+        }
         for(i = 0; i <= songs.size(); i++){
             Song s = songs.get(i);
             s.lock();

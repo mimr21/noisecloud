@@ -89,7 +89,7 @@ class ServerWorker implements Runnable {
                             out.println("Operação desconhecida.");
                     }
                 } catch (RemoteModelException | UsernameAlreadyExistsException
-                        | UserNotFoundException | InvalidPasswordException | NumberFormatException e) {
+                        | UserNotFoundException | InvalidPasswordException | NumberFormatException | NoSongsAvailableException e) {
                     out.println(false);
                     out.println(e.getMessage());
                 }

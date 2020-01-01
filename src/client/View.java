@@ -23,7 +23,8 @@ class View {
     public void main_menu() {
         out.println("1) Upload");
         out.println("2) Utilizadores");
-        out.println("3) Log out");
+        out.println("3) Procurar");
+        out.println("4) Log out");
     }
 
     public void linebreak(int n) {

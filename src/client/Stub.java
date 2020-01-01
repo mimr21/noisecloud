@@ -1,5 +1,6 @@
 package client;
 
+import exceptions.NoSongsAvailableException;
 import exceptions.RemoteModelException;
 import model.*;
 import static model.Noisecloud.*;

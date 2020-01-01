@@ -3,6 +3,7 @@ package model;
 import exceptions.*;
 
 import java.io.IOException;
+import java.rmi.NoSuchObjectException;
 import java.util.Collection;
 
 
@@ -19,5 +20,5 @@ public interface IModel {
 
     int upload(String title, String artist, int year, String[] tags, String filename) throws RemoteModelException;
 
-    Collection<Song> search(String tag) throws RemoteModelException;
+    Collection<Song> search(String tag) throws NoSongsAvailableException, RemoteModelException;
 }

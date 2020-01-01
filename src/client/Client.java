@@ -2,6 +2,7 @@ package client;
 
 import exceptions.*;
 import model.IModel;
+import model.Song;
 import model.User;
 import static model.Noisecloud.*;
 
@@ -128,7 +129,7 @@ public class Client {
                     break;
                 case "2":
                     try {
-                        Collection<User> users =model.listUsers();
+                        Collection<User> users = model.listUsers();
                         for (User user : users)
                             System.out.println(user.getUsername());
                     } catch (RemoteModelException e) {
@@ -136,6 +137,16 @@ public class Client {
                     }
                     break;
                 case "3":
+                    System.out.println("Tag: ");
+                    String t = stdin.readLine();
+                    try {
+                        Collection<Song> songs = model.search(t);
+                        for (Song song : songs)
+                            System.out.println(song.toString());
+                    } catch (RemoteModelException e) {
+                        view.err(e);
+                    }
+                case "4":
                     cont = false;
                     break;
                 default:
