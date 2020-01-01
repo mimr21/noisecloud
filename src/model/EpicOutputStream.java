@@ -19,9 +19,13 @@ public class EpicOutputStream {
         out.flush();
     }
 
-    public void println(String line) throws IOException {
-        out.writeUTF(line + EOL);
+    // Strings
+
+    public void println(String str) throws IOException {
+        out.writeUTF(str + EOL);
     }
+
+    // Tipos primitivos
 
     public void println(char c) throws IOException {
         out.writeUTF(c + EOL);
@@ -47,21 +51,108 @@ public class EpicOutputStream {
         out.writeUTF(f + EOL);
     }
 
-    public void println(Cerealizable c) throws IOException {
-        out.writeUTF(c.cerealize() + EOL);
+    // Arrays de Strings
+
+    public void print(String[] str_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(str_arr.length).append(EOL);
+
+        for (String str : str_arr)
+            sb.append(str).append(EOL);
+
+        out.writeUTF(sb.toString());
     }
 
-    public void sendFile(File file) throws IOException {
-        if (!file.isFile())
-            throw new FileNotFoundException(file.getAbsolutePath());
+    // Arrays de tipos primitivos
+
+    public void println(char[] c_arr) throws IOException {
+        println(String.valueOf(c_arr));
+    }
+
+    public void println(boolean[] b_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        int size = b_arr.length;
+
+        if (size > 0) {
+            sb.append(b_arr[0]);
+            for (int i = 1; i < size; ++i)
+                sb.append(" ").append(b_arr[i]);
+        }
+
+        out.writeUTF(sb.toString() + EOL);
+    }
+
+    public void println(int[] n_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        int size = n_arr.length;
+
+        if (size > 0) {
+            sb.append(n_arr[0]);
+            for (int i = 1; i < size; ++i)
+                sb.append(" ").append(n_arr[i]);
+        }
+
+        out.writeUTF(sb.toString() + EOL);
+    }
+
+    public void println(long[] l_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        int size = l_arr.length;
+
+        if (size > 0) {
+            sb.append(l_arr[0]);
+            for (int i = 1; i < size; ++i)
+                sb.append(" ").append(l_arr[i]);
+        }
+
+        out.writeUTF(sb.toString() + EOL);
+    }
+
+    public void println(double[] d_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        int size = d_arr.length;
+
+        if (size > 0) {
+            sb.append(d_arr[0]);
+            for (int i = 1; i < size; ++i)
+                sb.append(" ").append(d_arr[i]);
+        }
+
+        out.writeUTF(sb.toString() + EOL);
+    }
+
+    public void println(float[] f_arr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        int size = f_arr.length;
+
+        if (size > 0) {
+            sb.append(f_arr[0]);
+            for (int i = 1; i < size; ++i)
+                sb.append(" ").append(f_arr[i]);
+        }
+
+        out.writeUTF(sb.toString() + EOL);
+    }
+
+    // Ficheiros
+
+    public void print(File src) throws IOException {
+        if (!src.isFile())
+            throw new FileNotFoundException(src.getAbsolutePath());
 
         // envia o tamanho do ficheiro
-        println(file.length());
+        println(src.length());
 
         // envia o ficheiro
         byte[] bytes = new byte[FILE_BUFFER_SIZE];
         int count;
-        FileInputStream file_in = new FileInputStream(file);
+        FileInputStream file_in = new FileInputStream(src);
         while ((count = file_in.read(bytes)) > 0)
             out.write(bytes, 0, count);
         file_in.close();

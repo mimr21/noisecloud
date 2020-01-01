@@ -38,7 +38,7 @@ class Stub implements IModel {
             out.println(password);
             out.flush();
 
-            if (!Boolean.parseBoolean(in.readLine()))
+            if (!in.readLineToBoolean())
                 throw new RemoteModelException(in.readLine());
         } catch (IOException e) {
             throw new RemoteModelException(e.getMessage());
@@ -52,8 +52,8 @@ class Stub implements IModel {
             out.println(password);
             out.flush();
 
-            if (Boolean.parseBoolean(in.readLine()))
-                return Boolean.parseBoolean(in.readLine());
+            if (in.readLineToBoolean())
+                return in.readLineToBoolean();
             else
                 throw new RemoteModelException(in.readLine());
         } catch (IOException e) {
@@ -67,8 +67,8 @@ class Stub implements IModel {
             out.println(username);
             out.flush();
 
-            if (Boolean.parseBoolean(in.readLine()))
-                return Boolean.parseBoolean(in.readLine());
+            if (in.readLineToBoolean())
+                return in.readLineToBoolean();
             else
                 throw new RemoteModelException(in.readLine());
         } catch (IOException e) {
@@ -81,11 +81,11 @@ class Stub implements IModel {
             out.println("listUsers");
             out.flush();
 
-            if (Boolean.parseBoolean(in.readLine())) {
-                int size = Integer.parseInt(in.readLine());
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
                 Collection<User> users = new TreeSet<>();
                 while (size > 0) {
-                    users.add(User.descerealize(in.readLine()));
+                    users.add(User.descerealize(in.readStringArray()));
                     --size;
                 }
                 return users;
@@ -103,13 +103,13 @@ class Stub implements IModel {
             out.println(title);
             out.println(artist);
             out.println(year);
-            out.println(Cerealizable.cerealize(tags));
+            out.print(tags);
             out.println(getFilename(filepath));
-            out.sendFile(new File(filepath));
+            out.print(new File(filepath));
             out.flush();
 
-            if (Boolean.parseBoolean(in.readLine()))
-                return Integer.parseInt(in.readLine());
+            if (in.readLineToBoolean())
+                return in.readLineToInt();
             else
                 throw new RemoteModelException(in.readLine());
         } catch (IOException e) {

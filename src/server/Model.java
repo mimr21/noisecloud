@@ -4,9 +4,6 @@ import exceptions.*;
 import model.*;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 // package-private
@@ -14,22 +11,18 @@ class Model implements IModel {
     private final LockableMap<String, User> users;        // (username, User)
     private final LockableMap<Integer, Song> songs;       // (id, Song)
     private final ID songID;                              // next song id
-    private final ReentrantLock lockModel;
 
 
     public Model() {
         songID = new ID();
         users = new LockableHashMap<>();
         songs = new LockableHashMap<>();
-        lockModel = new ReentrantLock(true);
     }
 
     public void end() {}
 
     public void addUser(String username, String password) throws UsernameAlreadyExistsException {
-        lockModel.lock();
         users.lock();
-        lockModel.unlock();
 
         try {
             if (users.containsKey(username))
@@ -42,9 +35,7 @@ class Model implements IModel {
     }
 
     public boolean login(String username, String password) throws UserNotFoundException, InvalidPasswordException {
-        lockModel.lock();
         users.lock();
-        lockModel.unlock();
 
         if (!users.containsKey(username)) {
             users.unlock();
@@ -74,9 +65,7 @@ class Model implements IModel {
     }
 
     public boolean logout(String username) throws UserNotFoundException {
-        lockModel.lock();
         users.lock();
-        lockModel.unlock();
 
         if (!users.containsKey(username)) {
             users.unlock();
@@ -101,9 +90,7 @@ class Model implements IModel {
     }
 
     public Collection<User> listUsers() {
-        lockModel.lock();
         users.lock();
-        lockModel.unlock();
 
         try {
             return users.values();
@@ -113,10 +100,8 @@ class Model implements IModel {
     }
 
     public int upload(String title, String artist, int year, String[] tags, String filename) {
-        lockModel.lock();
         songs.lock();
         songID.lock();
-        lockModel.unlock();
 
         int id = songID.getAndIncrement();
         songID.unlock();

@@ -29,9 +29,8 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
         this.log = log;
     }
 
-    public static User descerealize(String s) {
-        String[] args = s.split(Cerealizable.ARGS_SEPARATOR);
-        return new User(args[0], args[1], Boolean.parseBoolean(args[2]));
+    public static User descerealize(String[] str_arr) {
+        return new User(str_arr[0], str_arr[1], Boolean.parseBoolean(str_arr[2]));
     }
 
     public String getUsername() {return this.username;}
@@ -53,8 +52,9 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Utilizador {nome_de_utilizador=")
-                .append(username)
+        sb.append("Utilizador {nome_de_utilizador='").append(username)
+                .append("', password='").append(password)
+                .append("', logged_in=").append(log)
                 .append("}");
         return sb.toString();
     }
@@ -71,14 +71,8 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
         this.lock.unlock();
     }
 
-    public String cerealize() {
-        String separator = Cerealizable.ARGS_SEPARATOR;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(username).append(separator)
-                .append(password).append(separator)
-                .append(log);
-        return sb.toString();
+    public String[] cerealize() {
+        return new String[]{username, password, String.valueOf(log)};
     }
 
     public int compareTo(User u) {

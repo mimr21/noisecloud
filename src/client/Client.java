@@ -102,11 +102,11 @@ public class Client {
 
             switch (stdin.readLine()) {
                 case "1":
-                    /*System.out.print("    Título: ");
+                    System.out.print("                  Título: ");
                     String title = stdin.readLine();
-                    System.out.print("Intérprete: ");
+                    System.out.print("              Intérprete: ");
                     String artist = stdin.readLine();
-                    System.out.print("       Ano: ");
+                    System.out.print("                     Ano: ");
                     int year;
                     try {
                         year = Integer.parseInt(stdin.readLine());
@@ -114,19 +114,26 @@ public class Client {
                         view.err(e);
                         continue;
                     }
-                    System.out.print("      Tags: ");
-                    String[] tags = stdin.readLine().split("/");*/
-                    System.out.print("  Ficheiro: ");
+                    System.out.print("Tags (separadas por '/'): ");
+                    String[] tags = stdin.readLine().split("/");
+                    System.out.print("                Ficheiro: ");
                     String filepath = normalizePath(stdin.readLine());
 
                     try {
-                        int id = model.upload("jose", "manel", 1900, new String[]{"fixe"}, filepath);
+                        int id = model.upload(title, artist, year, tags, filepath);
                         System.out.println("Upload feito com sucesso. ID da música: " + id);
                     } catch (RemoteModelException e) {
                         view.err(e);
                     }
                     break;
                 case "2":
+                    try {
+                        Collection<User> users =model.listUsers();
+                        for (User user : users)
+                            System.out.println(user.getUsername());
+                    } catch (RemoteModelException e) {
+                        view.err(e);
+                    }
                     break;
                 case "3":
                     cont = false;

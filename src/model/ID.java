@@ -4,24 +4,21 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ID implements Lockable {
     private int value;
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock(true);
 
     private static final int DEFAULT_INITIAL_VALUE = 0;
 
 
     public ID() {
         this.value = DEFAULT_INITIAL_VALUE;
-        this.lock = new ReentrantLock(true);
     }
 
     public ID(int initialValue) {
         this.value = initialValue;
-        this.lock = new ReentrantLock(true);
     }
 
     public ID(ID id) {
         this.value = id.value;
-        this.lock = new ReentrantLock(true);
     }
 
     public int get() {
@@ -43,7 +40,7 @@ public class ID implements Lockable {
     public ID clone() {return new ID(this);}
 
     public String toString() {
-        return String.valueOf(value);
+        return "ID {value=" + value + "}";
     }
 
     public int hashCode() {

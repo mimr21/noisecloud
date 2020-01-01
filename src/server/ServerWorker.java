@@ -58,18 +58,18 @@ class ServerWorker implements Runnable {
                             out.println(true);
                             out.println(users.size());
                             for (User user : users)
-                                out.println(user);
+                                out.print(user.cerealize());
                             break;
 
                         case "upload":
                             String title = in.readLine();
                             String artist = in.readLine();
-                            int year = Integer.parseInt(in.readLine());
-                            String[] tags = in.readLine().split(Cerealizable.ARRAY_SEPARATOR);
+                            int year = in.readLineToInt();
+                            String[] tags = in.readStringArray();
                             String filename = in.readLine();
 
                             File file = new File(storagePath(filename));
-                            in.readFileTo(file);
+                            in.readFile(file);
                             int id = model.upload(title, artist, year, tags, filename);
                             out.println(true);
                             out.println(id);

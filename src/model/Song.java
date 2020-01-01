@@ -13,7 +13,7 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     private int downloads;
     private String filename;
 
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock(true);
 
 
     public Song(int id, String title, String artist, int year, String[] tags, int downloads, String filename) {
@@ -24,7 +24,6 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         this.tags = tags.clone();
         this.downloads = downloads;
         this.filename = filename;
-        this.lock = new ReentrantLock(true);
     }
 
     public Song(Song m) {
@@ -35,13 +34,19 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         this.tags = m.tags.clone();
         this.downloads = m.downloads;
         this.filename = m.filename;
-        this.lock = new ReentrantLock(true);
     }
 
-    public static Song descerealize(String s) {
-        String[] args = s.split(Cerealizable.ARGS_SEPARATOR);
-        return new Song(Integer.parseInt(args[0]), args[1], args[2], Integer.parseInt(args[3]),
-                args[4].split(Cerealizable.ARRAY_SEPARATOR), Integer.parseInt(args[5]), args[6]);
+    public static Song descerealize(String[] str_arr) {
+        String[] tags = new String[str_arr.length - 6];
+        System.arraycopy(str_arr, 6, tags, 0, tags.length);
+
+        return new Song(Integer.parseInt(str_arr[0]),
+                str_arr[1],
+                str_arr[2],
+                Integer.parseInt(str_arr[3]),
+                tags,
+                Integer.parseInt(str_arr[4]),
+                str_arr[5]);
     }
 
     public int getID() {return this.id;}
@@ -94,16 +99,18 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         this.lock.unlock();
     }
 
-    public String cerealize() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id).append(Cerealizable.ARGS_SEPARATOR)
-                .append(title).append(Cerealizable.ARGS_SEPARATOR)
-                .append(artist).append(Cerealizable.ARGS_SEPARATOR)
-                .append(year).append(Cerealizable.ARGS_SEPARATOR)
-                .append(Cerealizable.cerealize(tags)).append(Cerealizable.ARGS_SEPARATOR)
-                .append(downloads).append(Cerealizable.ARGS_SEPARATOR)
-                .append(filename);
-        return sb.toString();
+    public String[] cerealize() {
+        String[] r = new String[6 + tags.length];
+
+        r[0] = String.valueOf(id);
+        r[1] = title;
+        r[2] = artist;
+        r[3] = String.valueOf(year);
+        r[4] = String.valueOf(downloads);
+        r[5] = filename;
+        System.arraycopy(tags, 0, r, 6, tags.length);
+
+        return r;
     }
 
     public int compareTo(Song s) {
