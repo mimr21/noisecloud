@@ -143,7 +143,7 @@ public class Client {
                         Collection<Song> songs = model.search(t);
                         for (Song song : songs)
                             System.out.println(song.toString());
-                    } catch (RemoteModelException e) {
+                    } catch (RemoteModelException | NoSongsAvailableException e) {
                         view.err(e);
                     }
                 case "4":
