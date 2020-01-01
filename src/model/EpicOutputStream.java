@@ -21,38 +21,46 @@ public class EpicOutputStream {
 
     // Strings
 
+    /** Escreve uma String numa linha */
     public void println(String str) throws IOException {
         out.writeUTF(str + EOL);
     }
 
     // Tipos primitivos
 
+    /** Escreve um char numa linha */
     public void println(char c) throws IOException {
         out.writeUTF(c + EOL);
     }
 
+    /** Escreve um boolean numa linha */
     public void println(boolean b) throws IOException {
         out.writeUTF(b + EOL);
     }
 
+    /** Escreve um int numa linha */
     public void println(int n) throws IOException {
         out.writeUTF(n + EOL);
     }
 
+    /** Escreve um long numa linha */
     public void println(long l) throws IOException {
         out.writeUTF(l + EOL);
     }
 
+    /** Escreve um double numa linha */
     public void println(double d) throws IOException {
         out.writeUTF(d + EOL);
     }
 
+    /** Escreve um float numa linha */
     public void println(float f) throws IOException {
         out.writeUTF(f + EOL);
     }
 
     // Arrays de Strings
 
+    /** Escreve numa linha o tamanho do array e nas linhas seguintes as Strings */
     public void print(String[] str_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -66,10 +74,12 @@ public class EpicOutputStream {
 
     // Arrays de tipos primitivos
 
+    /** Escreve os carateres seguidos numa linha */
     public void println(char[] c_arr) throws IOException {
         println(String.valueOf(c_arr));
     }
 
+    /** Escreve os booleans numa linha, separados por um espaço */
     public void println(boolean[] b_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -84,6 +94,7 @@ public class EpicOutputStream {
         out.writeUTF(sb.toString() + EOL);
     }
 
+    /** Escreve os ints numa linha, separados por um espaço */
     public void println(int[] n_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -98,6 +109,7 @@ public class EpicOutputStream {
         out.writeUTF(sb.toString() + EOL);
     }
 
+    /** Escreve os longs numa linha, separados por um espaço */
     public void println(long[] l_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -112,6 +124,7 @@ public class EpicOutputStream {
         out.writeUTF(sb.toString() + EOL);
     }
 
+    /** Escreve os doubles numa linha, separados por um espaço */
     public void println(double[] d_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -126,6 +139,7 @@ public class EpicOutputStream {
         out.writeUTF(sb.toString() + EOL);
     }
 
+    /** Escreve os floats numa linha, separados por um espaço */
     public void println(float[] f_arr) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -142,6 +156,7 @@ public class EpicOutputStream {
 
     // Ficheiros
 
+    /** Escreve o tamanho do ficheiro numa linha, e os bytes do ficheiro a seguir */
     public void print(File src) throws IOException {
         if (!src.isFile())
             throw new FileNotFoundException(src.getAbsolutePath());
