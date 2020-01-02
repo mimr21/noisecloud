@@ -1,4 +1,4 @@
-package model;
+package common;
 
 public interface Lockable {
     void lock();

@@ -1,4 +1,4 @@
-package model;
+package common;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;

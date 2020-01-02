@@ -1,8 +1,8 @@
 package server;
 
 import exceptions.*;
-import model.*;
-import static model.Noisecloud.*;
+import common.*;
+import static common.Noisecloud.*;
 
 import java.io.*;
 import java.net.Socket;

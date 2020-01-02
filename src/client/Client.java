@@ -1,10 +1,10 @@
 package client;
 
 import exceptions.*;
-import model.IModel;
-import model.Song;
-import model.User;
-import static model.Noisecloud.*;
+import common.IModel;
+import common.Song;
+import common.User;
+import static common.Noisecloud.*;
 
 import java.io.*;
 import java.util.Collection;

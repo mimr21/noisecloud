@@ -1,7 +1,7 @@
 package server;
 
 import exceptions.*;
-import model.*;
+import common.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -9,13 +9,13 @@ import java.util.TreeSet;
 
 
 // package-private
-class Model implements IModel {
+class Data implements IModel {
     private final LockableMap<String, User> users;        // (username, User)
     private final LockableMap<Integer, Song> songs;       // (id, Song)
     private final ID songID;                              // next song id
 
 
-    public Model() {
+    public Data() {
         songID = new ID();
         users = new LockableHashMap<>();
         songs = new LockableHashMap<>();

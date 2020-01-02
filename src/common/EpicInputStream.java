@@ -1,4 +1,4 @@
-package model;
+package common;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;

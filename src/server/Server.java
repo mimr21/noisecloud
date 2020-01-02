@@ -1,6 +1,6 @@
 package server;
 
-import model.IModel;
+import common.IModel;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,7 +12,7 @@ public class Server {
         System.out.println("A iniciar...");
         ServerSocket sSock = new ServerSocket(12345);
 
-        IModel model = new Model();
+        IModel model = new Data();
 
         int id = 0;
         System.out.println("À espera de clients...");

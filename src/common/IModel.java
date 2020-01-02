@@ -1,9 +1,8 @@
-package model;
+package common;
 
 import exceptions.*;
 
 import java.io.IOException;
-import java.rmi.NoSuchObjectException;
 import java.util.Collection;
 
 
