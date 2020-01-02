@@ -9,7 +9,7 @@ public class EpicInputStream {
     private final DataInputStream in;
     private BufferedReader reader;
 
-    private static final int FILE_BUFFER_SIZE = 8192;       // == 8*1024 == 8KB
+    private static final int MAXSIZE = 8192;       // == 8*1024 == 8KB
 
 
     public EpicInputStream(DataInputStream in) {
@@ -138,7 +138,7 @@ public class EpicInputStream {
             long length = Long.parseLong(readLine());
 
             // lê os bytes para o ficheiro
-            byte[] bytes = new byte[FILE_BUFFER_SIZE];
+            byte[] bytes = new byte[MAXSIZE];
             int count = 0;
             FileOutputStream file_out = new FileOutputStream(dest);
             while ((length -= count) > 0 && (count = in.read(bytes)) > 0)

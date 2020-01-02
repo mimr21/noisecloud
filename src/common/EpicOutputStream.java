@@ -8,7 +8,7 @@ public class EpicOutputStream {
     private final DataOutputStream out;
 
     private static final String EOL = "\n";
-    private static final int FILE_BUFFER_SIZE = 8192;       // == 8*1024 == 8KB
+    private static final int MAXSIZE = 8192;       // == 8*1024 == 8KB
 
 
     public EpicOutputStream(DataOutputStream out) {
@@ -165,7 +165,7 @@ public class EpicOutputStream {
         println(src.length());
 
         // envia o ficheiro
-        byte[] bytes = new byte[FILE_BUFFER_SIZE];
+        byte[] bytes = new byte[MAXSIZE];
         int count;
         FileInputStream file_in = new FileInputStream(src);
         while ((count = file_in.read(bytes)) > 0)
