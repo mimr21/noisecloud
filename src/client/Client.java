@@ -7,7 +7,7 @@ import common.User;
 import static common.Noisecloud.*;
 
 import java.io.*;
-import java.util.Collection;
+import java.util.*;
 
 
 public class Client {
@@ -172,12 +172,10 @@ public class Client {
     private void todas_as_musicas() {
         try {
             Collection<Song> songs = model.listSongs();
-            if (songs.isEmpty()) {
+            if (songs.isEmpty())
                 System.out.println("Não há músicas");
-            } else {
-                for (Song song : songs)
-                    System.out.println(song.toString());
-            }
+            else
+                view.println(toStringList(songs));
         } catch (RemoteModelException e) {
             view.err(e);
         }
@@ -188,12 +186,10 @@ public class Client {
         String tag = stdin.readLine();
         try {
             Collection<Song> songs = model.search(tag);
-            if (songs.isEmpty()) {
+            if (songs.isEmpty())
                 System.out.println("Não há músicas com a tag '" + tag + "'");
-            } else {
-                for (Song song : songs)
-                    System.out.println(song.toString());
-            }
+            else
+                view.println(toStringList(songs));
         } catch (RemoteModelException e) {
             view.err(e);
         }
@@ -207,5 +203,15 @@ public class Client {
         } catch (RemoteModelException e) {
             view.err(e);
         }
+    }
+
+    private static List<String> toStringList(Collection<Song> songs) {
+        List<String> r = new ArrayList<>();
+        int i = 0;
+
+        for (Song song : songs)
+            r.add(++i + ") " + song.prettyPrint());
+
+        return r;
     }
 }

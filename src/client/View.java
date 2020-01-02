@@ -1,10 +1,15 @@
 package client;
 
+import java.util.List;
+
 import static java.lang.System.out;
 
 
 // package-private
 class View {
+    private static final String TAB = "    ";
+
+
     public View() {}
 
     public void logo() {
@@ -28,16 +33,54 @@ class View {
         out.println("5) Log out");
     }
 
-    public void linebreak(int n) {
-        for (int i = 0; i < n; ++i)
-            out.println();
-    }
-
     public void err(String msg) {
         out.println("Erro: " + msg);
     }
 
     public void err(Exception e) {
         out.println("Erro: " + e.getMessage());
+    }
+
+    public void print(List<String> strs) {
+        final int STRINGS_PER_LINE = 3;
+        final int NUM_STRINGS = strs.size();
+        final int STRING_WIDTH = maxWidth(strs);
+
+        for (int i = 0; i < NUM_STRINGS; ++i) {
+            int x = i % STRINGS_PER_LINE;
+
+            if (x == 0)
+                out.print(enlarge(strs.get(i), STRING_WIDTH));
+            else if (x == STRINGS_PER_LINE-1)
+                out.println(TAB + strs.get(i));
+            else
+                out.print(TAB + enlarge(strs.get(i), STRING_WIDTH));
+        }
+    }
+
+    public void println(List<String> strs) {
+        print(strs);
+        out.println();
+    }
+
+    private int maxWidth(List<String> strs) {
+        int max = 0;
+
+        for (String str : strs) {
+            int length = str.length();
+            if (length > max)
+                max = length;
+        }
+
+        return max;
+    }
+
+    private String enlarge(String str, int newLength) {
+        int diff = newLength - str.length();
+
+        if (diff <= 0)
+            return str;
+        else
+            return str + " ".repeat(diff);
     }
 }

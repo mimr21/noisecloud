@@ -6,6 +6,7 @@ import static common.Noisecloud.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Collection;
 
 
@@ -61,9 +62,9 @@ class ServerWorker implements Runnable {
                             out.println(false);
                             out.println("Operação desconhecida.");
                     }
-                } catch (RemoteModelException | UserNotFoundException | SongNotFoundException
-                        | UsernameAlreadyExistsException | InvalidPasswordException
-                        | NumberFormatException | FileNotFoundException e) {
+                } catch (RemoteModelException
+                        | UserNotFoundException | SongNotFoundException | UsernameAlreadyExistsException | InvalidPasswordException
+                        | NumberFormatException | FileNotFoundException | FileAlreadyExistsException e) {
                     out.println(false);
                     out.println(e.getMessage());
                 }

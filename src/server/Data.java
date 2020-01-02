@@ -9,10 +9,10 @@ import java.util.TreeSet;
 
 
 // package-private
-class Data implements IModel {
-    private final LockableMap<String, User> users;        // (username, User)
-    private final LockableMap<Integer, Song> songs;       // (id, Song)
-    private final ID songID;                              // next song id
+class Data implements IModel {                            //                    ordem dos locks:
+    private final LockableMap<String, User> users;        // (username, User)   1º
+    private final LockableMap<Integer, Song> songs;       // (id, Song)         2º
+    private final ID songID;                              // next song id       3º
 
 
     public Data() {

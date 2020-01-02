@@ -51,12 +51,12 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     public User clone() {return new User(this);}
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Utilizador {nome_de_utilizador='").append(username)
+        return new StringBuilder()
+                .append("Utilizador {nome_de_utilizador='").append(username)
                 .append("', password='").append(password)
                 .append("', logged_in=").append(log)
-                .append("}");
-        return sb.toString();
+                .append("}")
+                .toString();
     }
 
     public int hashCode() {

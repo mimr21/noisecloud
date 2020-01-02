@@ -3,7 +3,8 @@ package common;
 
 public class Noisecloud {
     public static final int MAXSIZE = 8192;       // == 8*1024 == 8KB
-    
+    public static final int MAXDOWN = 10;
+
     private static final String SEPARATOR;
     private static final String ALT_SEPARATOR;
     private static final String SERVER_STORAGE_PATH;

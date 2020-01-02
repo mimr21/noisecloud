@@ -75,16 +75,16 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     public Song clone() {return new Song(this);}
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Música {id=").append(id)
+        return new StringBuilder()
+                .append("Música {id=").append(id)
                 .append(", título='").append(title)
                 .append("', intérprete='").append(artist)
                 .append("', ano=").append(year)
                 .append(", tags=").append(Arrays.toString(tags))
                 .append(", downloads=").append(downloads)
                 .append(", nome_do_ficheiro='").append(filename)
-                .append("'}");
-        return sb.toString();
+                .append("'}")
+                .toString();
     }
 
     public int hashCode() {
@@ -114,13 +114,15 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     }
 
     public int compareTo(Song s) {
-        int r;
-        r = this.title.compareTo(s.title);
+        int r = this.artist.compareTo(s.artist);
+
         if (r == 0) {
-            r = this.artist.compareTo(s.artist);
+            r = this.title.compareTo(s.title);
+
             if (r == 0)
                 r = Integer.compare(this.id, s.id);
         }
+
         return r;
     }
 
@@ -132,6 +134,14 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         for (String t : tags)
             if (t.equals(tag))
                 return true;
+
         return false;
+    }
+
+    public String prettyPrint() {
+        return new StringBuilder()
+                .append(artist).append(" - ").append(title)
+                .append(" (").append(year).append(")")
+                .toString();
     }
 }

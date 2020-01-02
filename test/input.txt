@@ -1,0 +1,96 @@
+2
+luis
+123
+2
+mimi
+123
+2
+bruno
+123
+2
+ricardo
+123
+1
+luis
+123
+1
+Electric Blue
+Arcade Fire
+2017
+dance-rock
+C:\Users\luisc\git\noisecloud\test_media\Arcade Fire - Electric Blue.mp3
+1
+Mardy Bum
+Arctic Monkeys
+2006
+indie rock
+C:\Users\luisc\git\noisecloud\test_media\Arctic Monkeys - Mardy Bum.mp3
+1
+Everytime
+boy pablo
+2017
+indie rock/indie pop
+C:\Users\luisc\git\noisecloud\test_media\boy pablo - Everytime.mp3
+1
+Burning Love
+Elvis Presley
+1973
+rock
+C:\Users\luisc\git\noisecloud\test_media\Elvis Presley - Burning Love.mp3
+1
+On Melancholy Hill
+Gorillaz
+2010
+synth-pop/new wave
+C:\Users\luisc\git\noisecloud\test_media\Gorillaz - On Melancholy Hill.mp3
+1
+Sanctuary
+Joji
+2019
+lo-fi/trap/electronica/r&b
+C:\Users\luisc\git\noisecloud\test_media\Joji - Sanctuary.mp3
+1
+Chamber Of Reflection
+Mac DeMarco
+2014
+soft rock/psychedelic pop/lo-fi
+C:\Users\luisc\git\noisecloud\test_media\Mac DeMarco - Chamber Of Reflection.mp3
+1
+Marooned
+Pink Floyd
+1994
+progressive rock/instrumental rock
+C:\Users\luisc\git\noisecloud\test_media\Pink Floyd - Marooned.mp3
+1
+So Much I
+Red Hot Chili Peppers
+2006
+funk rock/alternative rock
+C:\Users\luisc\git\noisecloud\test_media\Red Hot Chili Peppers - So Much I.mp3
+1
+One Rizla
+Shame
+2018
+post-punk/indie rock
+C:\Users\luisc\git\noisecloud\test_media\Shame - One Rizla.mp3
+1
+Star Roving
+Slowdive
+2017
+shoegazing
+C:\Users\luisc\git\noisecloud\test_media\Slowdive - Star Roving.mp3
+1
+It Might Be Time
+Tame Impala
+2019
+psychedelic pop
+C:\Users\luisc\git\noisecloud\test_media\Tame Impala - It Might Be Time.mp3
+1
+Juvenile
+The Blaze
+2017
+electronic/dance
+C:\Users\luisc\git\noisecloud\test_media\The Blaze - Juvenile.mp3
+2
+5
+3
