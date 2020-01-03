@@ -72,83 +72,73 @@ public class Navigator {
         return print_page();
     }
 
+    public int navigator_width() {
+        int max_string_length = 1;
+        int last_column_max_length = 1;
+        int x = Math.min(num_columns, size) - 1;
+
+        return max_string_length*x + TAB_LENGTH*x + last_column_max_length;
+    }
+
     private int printV(List<String> strings) {
-        if (num_columns <= 1) {
+        final int size = strings.size();
+
+        if (num_columns == 1 || size <= num_lines) {
             int max_string_length = 0;
 
             for (String str : strings) {
                 out.println(str);
-                int length = str.length();
+                final int length = str.length();
                 if (length > max_string_length)
                     max_string_length = length;
             }
 
             return max_string_length;
         } else {
-            final int size = strings.size();
             final int max_string_length = maxLength(strings);
-            final int num_strings_per_column = size / num_columns;
-            final int remain = size % num_columns;
+            final int num_columns = size / num_lines + Math.min(size % num_lines, 1);
+            final int jmax = num_columns - 1;
             int last_column_max_length = 0;
 
-            int i = 0;
-            int jmax = num_columns - 1;
-            for (; i < num_strings_per_column; ++i) {
-                // primeiro elemento
+            for (int i = 0; i < num_lines; ++i) {
                 out.print(enlarge(strings.get(i), max_string_length));
 
-                // elementos no meio
-                int k;
-                for (int j = 1; j < jmax; ++j) {
-                    k = i + j * num_strings_per_column + Math.min(j, remain);
-                    out.print(TAB + enlarge(strings.get(k), max_string_length));
+                int index = i + num_lines;
+                for (int j = 1;
+                     j < jmax && index < size;
+                     ++j, index += num_lines) {
+                    out.print(TAB + enlarge(strings.get(index), max_string_length));
                 }
 
-                // último elemento
-                k = i + jmax * num_strings_per_column + Math.min(jmax, remain);
-                final String str = strings.get(k);
-                out.println(TAB + str);
-                final int length = str.length();
-                if (length > last_column_max_length)
-                    last_column_max_length = length;
-            }
-
-            // última linha
-            if (remain == 1) {
-                out.println(strings.get(i));
-            } else if (remain > 1) {
-                // primeiro elemento
-                out.print(enlarge(strings.get(i), max_string_length));
-
-                // elementos no meio
-                final int iInc = num_strings_per_column + 1;
-                jmax = remain - 1;
-                for (int j = 1; j < jmax; ++j) {
-                    i += iInc;
-                    out.print(TAB + enlarge(strings.get(i), max_string_length));
+                if (index < size) {
+                    final String str = strings.get(index);
+                    out.print(TAB + str);
+                    final int length = str.length();
+                    if (length > last_column_max_length)
+                        last_column_max_length = length;
                 }
 
-                // último elemento
-                out.println(TAB + strings.get(i + iInc));
+                out.println();
             }
 
-            return navigator_width(max_string_length, last_column_max_length, size);
+            return max_string_length*jmax + TAB_LENGTH*jmax + last_column_max_length;
         }
     }
 
     private int printH(List<String> strings) {
         final int size = strings.size();
         final int max_string_length = maxLength(strings);
+        final int xmax = num_columns - 1;
         int last_column_max_length = 0;
 
         int i = 0;
         for (; i < size; ++i) {
-            int x = i % num_columns;
+            final int x = i % num_columns;
 
             if (x > 0)
                 out.print(TAB);
 
-            if (x == num_columns-1) {
+            if (x == xmax) {
                 final String str = strings.get(i);
                 out.println(str);
                 final int length = str.length();
@@ -162,11 +152,7 @@ public class Navigator {
         if (i % num_columns != 0)
             out.println();
 
-        return navigator_width(max_string_length, last_column_max_length, size);
-    }
-
-    private int navigator_width(int max_string_length, int last_column_max_length, int size) {
-        int x = Math.min(num_columns, size) - 1;
+        final int x = Math.min(num_columns, size) - 1;
 
         return max_string_length*x + TAB_LENGTH*x + last_column_max_length;
     }
