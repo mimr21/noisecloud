@@ -4,3 +4,5 @@
 .idea/misc.xml
 out/production/
 out/test/
+_client_downloads/.keep
+_server_storage/.keep
