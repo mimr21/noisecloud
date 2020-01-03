@@ -5,6 +5,7 @@ import common.IModel;
 import common.Song;
 import common.User;
 import static common.Noisecloud.normalizePath;
+import static client.Navigator.Orientation;
 
 import java.io.*;
 import java.util.*;
@@ -14,6 +15,8 @@ public class Client {
     private final IModel model;
     private final View view;
     private final BufferedReader stdin;
+
+    private static final String INVALID_OPTION = "Opção inválida";
 
 
     public static void main(String[] args) {
@@ -40,11 +43,7 @@ public class Client {
         view.logo();
         System.out.println();
 
-        try {
-            login_menu();
-        } catch (IOException e) {
-            view.err(e);
-        }
+        login_menu();
 
         try {
             model.end();
@@ -55,28 +54,29 @@ public class Client {
 
     // Menu de Log In
 
-    private void login_menu() throws IOException {
+    private void login_menu() {
         boolean cont = true;
 
         while (cont) {
             System.out.println();
             view.login_menu();
 
-            switch (stdin.readLine()) {
-                case "1":
-                    login();
-                    break;
-
-                case "2":
-                    sign_up();
-                    break;
-
-                case "3":   // sair
-                    cont = false;
-                    break;
-
-                default:
-                    view.err("Opção inválida");
+            try {
+                switch (stdin.readLine()) {
+                    case "1":
+                        login();
+                        break;
+                    case "2":
+                        sign_up();
+                        break;
+                    case "3":   // sair
+                        cont = false;
+                        break;
+                    default:
+                        view.err(INVALID_OPTION);
+                }
+            } catch (IOException e) {
+                view.err(e);
             }
         }
     }
@@ -109,44 +109,165 @@ public class Client {
 
     // Menu principal
 
-    private void main_menu() throws IOException {
+    private void main_menu() {
         boolean cont = true;
 
         while (cont) {
             System.out.println();
             view.main_menu();
 
-            switch (stdin.readLine()) {
-                case "1":
-                    songs();
-                    break;
+            try {
+                switch (stdin.readLine()) {
+                    case "1":
+                        songs();
+                        break;
+                    case "2":
+                        top_downloads();
+                        break;
+                    case "3":
+                        search_songs_by_title();
+                        break;
+                    case "4":
+                        search_songs_by_artist();
+                        break;
+                    case "5":
+                        search_songs_by_tag();
+                        break;
+                    case "6":
+                        download();
+                        break;
+                    case "7":
+                        upload();
+                        break;
+                    case "8":
+                        users();
+                        break;
+                    case "9":   // log out
+                        cont = false;
+                        break;
+                    default:
+                        view.err(INVALID_OPTION);
+                }
+            } catch (IOException e) {
+                view.err(e);
+            }
+        }
+    }
 
-                case "2":
-                    search_songs_by_title();
-                    break;
+    private void songs() throws IOException {
+        try {
+            Collection<Song> songs = model.listSongs();
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas");
+            } else {
+                List<String> strs = new ArrayList<>();
+                for (Song song : songs)
+                    strs.add(song.getID() + ") " + song.prettyPrint());
 
-                case "3":
-                    search_songs_by_artist();
-                    break;
+                navigator(strs, 6, 3);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
 
-                case "4":
-                    search_songs_by_tag();
-                    break;
+    private void top_downloads() throws IOException {
+        System.out.print("Nº músicas: ");
+        try {
+            int top = Integer.parseInt(stdin.readLine());
+            Collection<Song> songs = model.mostDownloaded(top);
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas");
+            } else {
+                List<String> strs = new ArrayList<>();
+                for (Song song : songs)
+                    strs.add(song.getID() + ") " + song.prettyPrint() + " [" + song.getDownloads() + "]");
 
-                case "5":
-                    upload();
-                    break;
+                navigator(strs, 6, 4);
+            }
+        } catch (NumberFormatException | RemoteModelException e) {
+            view.err(e);
+        }
+    }
 
-                case "6":
-                    users();
-                    break;
+    private void search_songs_by_title() throws IOException {
+        System.out.print("Título: ");
+        String title = stdin.readLine();
+        try {
+            List<Song> songs = (List<Song>) model.searchTitle(title);
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas com o título '" + title + "'");
+            } else {
+                List<String> strs = new ArrayList<>();
+                for (Song song : songs)
+                    strs.add(song.getID() + ") " + song.prettyPrint());
 
-                case "7":   // log out
-                    cont = false;
-                    break;
+                navigator(strs, 6, 3);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
 
-                default:
-                    view.err("Opção inválida");
+    private void search_songs_by_artist() throws IOException {
+        System.out.print("Intérprete: ");
+        String artist = stdin.readLine();
+        try {
+            Collection<Song> songs = model.searchArtist(artist);
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas do intérprete '" + artist + "'");
+            } else {
+                List<String> strs = new ArrayList<>();
+                for (Song song : songs)
+                    strs.add(song.getID() + ") " + song.prettyPrint());
+
+                navigator(strs, 6, 3);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void search_songs_by_tag() throws IOException {
+        System.out.print("Tag: ");
+        String tag = stdin.readLine();
+        try {
+            Collection<Song> songs = model.searchTag(tag);
+            if (songs.isEmpty()) {
+                System.out.println("Não há músicas com a tag '" + tag + "'");
+            } else {
+                List<String> strs = new ArrayList<>();
+                for (Song song : songs)
+                    strs.add(song.getID() + ") " + song.prettyPrint() + " " + Arrays.toString(song.getTags()));
+
+                navigator(strs, 6, 2);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void download() throws IOException {
+        System.out.print("IDs: ");
+
+        String[] ids_str = stdin.readLine().split(" ");
+        int size = ids_str.length;
+        int[] ids = new int[size];
+
+        try {
+            for (int i = 0; i < size; ++i)
+                ids[i] = Integer.parseInt(ids_str[i]);
+        } catch (NumberFormatException e) {
+            view.err(e);
+            return;
+        }
+
+        for (int id : ids) {
+            try {
+                model.download(id);
+                System.out.println(id + ") Download efetuado com sucesso");
+            } catch (SongNotFoundException | RemoteModelException e) {
+                view.err(e);
             }
         }
     }
@@ -179,127 +300,54 @@ public class Client {
         }
     }
 
-    private void songs() throws IOException {
+    private void users() throws IOException {
         try {
-            List<Song> songs = (List<Song>) model.listSongs();
-            if (songs.isEmpty())
-                System.out.println("Não há músicas");
-            else {
-                List<String> strs = new ArrayList<>();
-                int i = 0;
-
-                for (Song song : songs)
-                    strs.add(++i + ") " + song.prettyPrint());
-
-                view.printV(strs, 3);
-
-                download(songs);
-            }
-        } catch (RemoteModelException e) {
-            view.err(e);
-        }
-    }
-
-    private void search_songs_by_title() throws IOException {
-        System.out.print("Título: ");
-        String title = stdin.readLine();
-        try {
-            List<Song> songs = (List<Song>) model.searchTitle(title);
-            if (songs.isEmpty())
-                System.out.println("Não há músicas com o título '" + title + "'");
-            else {
-                List<String> strs = new ArrayList<>();
-                int i = 0;
-
-                for (Song song : songs)
-                    strs.add(++i + ") " + song.prettyPrint());
-
-                view.printV(strs, 3);
-
-                download(songs);
-            }
-        } catch (RemoteModelException e) {
-            view.err(e);
-        }
-    }
-
-    private void search_songs_by_artist() throws IOException {
-        System.out.print("Intérprete: ");
-        String artist = stdin.readLine();
-        try {
-            List<Song> songs = (List<Song>) model.searchArtist(artist);
-            if (songs.isEmpty())
-                System.out.println("Não há músicas do intérprete '" + artist + "'");
-            else {
-                List<String> strs = new ArrayList<>();
-                int i = 0;
-
-                for (Song song : songs)
-                    strs.add(++i + ") " + song.prettyPrint());
-
-                view.printV(strs, 3);
-
-                download(songs);
-            }
-        } catch (RemoteModelException e) {
-            view.err(e);
-        }
-    }
-
-    private void search_songs_by_tag() throws IOException {
-        System.out.print("Tag: ");
-        String tag = stdin.readLine();
-        try {
-            List<Song> songs = (List<Song>) model.searchTag(tag);
-            if (songs.isEmpty())
-                System.out.println("Não há músicas com a tag '" + tag + "'");
-            else {
-                List<String> strs = new ArrayList<>();
-                int i = 0;
-
-                for (Song song : songs)
-                    strs.add(++i + ") " + song.prettyPrint() + " " + Arrays.toString(song.getTags()));
-
-                view.printV(strs, 2);
-
-                download(songs);
-            }
-        } catch (RemoteModelException e) {
-            view.err(e);
-        }
-    }
-
-    private void users() {
-        try {
-            List<User> users = (List<User>) model.listUsers();
+            Collection<User> users = model.listUsers();
+            List<String> strs = new ArrayList<>();
             for (User user : users)
-                System.out.println(user.getUsername());
+                strs.add(user.getUsername());
+
+            navigator(strs, 7, 9);
         } catch (RemoteModelException e) {
             view.err(e);
         }
     }
 
-    private void download(List<Song> songs) throws IOException {
-        System.out.print("download: ");
+    private void navigator(List<String> strings, int num_lines, int num_columns) throws IOException {
+        Navigator nav = new Navigator(strings, Orientation.VERTICAL, num_lines, num_columns);
+        int width = nav.print_page();
+        view.printNavigatorBar(width);
 
-        int index;
-        try {
-            index = Integer.parseInt(stdin.readLine());
-        } catch (NumberFormatException e) {
-            return;
-        }
-        --index;
-
-        if (index < 0 || index >= songs.size()) {
-            view.err("Índice inválido");
-            return;
-        }
-
-        try {
-            model.download(songs.get(index).getID());
-            System.out.println("Download efetuado com sucesso");
-        } catch (SongNotFoundException | RemoteModelException e) {
-            view.err(e);
+        boolean cont = true;
+        while (cont) {
+            String[] args = stdin.readLine().split(" ");
+            try {
+                switch (args[0]) {
+                    case "s":
+                        cont = false;
+                        break;
+                    case "a":
+                        width = nav.previous_page();
+                        view.printNavigatorBar(width);
+                        break;
+                    case "p":
+                        width = nav.next_page();
+                        view.printNavigatorBar(width);
+                        break;
+                    case "r":
+                        width = nav.resize(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                        view.printNavigatorBar(width);
+                        break;
+                    case "o":
+                        width = nav.switchOrientation();
+                        view.printNavigatorBar(width);
+                        break;
+                    default:
+                        view.err(INVALID_OPTION);
+                }
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                view.err(e);
+            }
         }
     }
 }

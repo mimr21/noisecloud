@@ -3,9 +3,7 @@ package server;
 import exceptions.*;
 import common.*;
 
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 
 // package-private
@@ -129,7 +127,7 @@ class Data implements IModel {                            //                    
         }
     }
 
-    public SortedSet<User> listUsers() {
+    public Set<User> listUsers() {
         users.lock();
 
         Collection<User> users_aux = users.values();
@@ -149,7 +147,7 @@ class Data implements IModel {                            //                    
         return r;
     }
 
-    public SortedSet<Song> listSongs() {
+    public Set<Song> listSongs() {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -169,7 +167,7 @@ class Data implements IModel {                            //                    
         return r;
     }
 
-    public SortedSet<Song> searchTitle(String title) {
+    public Set<Song> searchTitle(String title) {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -190,7 +188,7 @@ class Data implements IModel {                            //                    
         return match;
     }
 
-    public SortedSet<Song> searchArtist(String artist) {
+    public Set<Song> searchArtist(String artist) {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -211,7 +209,7 @@ class Data implements IModel {                            //                    
         return match;
     }
 
-    public SortedSet<Song> searchTag(String tag) {
+    public Set<Song> searchTag(String tag) {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -230,5 +228,40 @@ class Data implements IModel {                            //                    
         }
 
         return match;
+    }
+
+    public List<Song> mostDownloaded(int top) {
+        songs.lock();
+
+        Collection<Song> songs_aux = songs.values();
+
+        for (Song song : songs_aux)
+            song.lock();
+
+        songs.unlock();
+
+        System.out.println(songs_aux);
+
+        // ordenação
+        SortedSet<Song> sorted_songs = new TreeSet<>(Song.topDownloadsComparator);
+
+        for (Song song : songs_aux) {
+            sorted_songs.add(song.clone());
+            song.unlock();
+        }
+
+        System.out.println(sorted_songs);
+
+        // top
+        List<Song> r = new ArrayList<>();
+
+        Iterator<Song> itr = sorted_songs.iterator();
+
+        for (int i = 0; itr.hasNext() && i < top; ++i)
+            r.add(itr.next());
+
+        System.out.println(r);
+
+        return r;
     }
 }

@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -211,6 +212,28 @@ class Stub implements IModel {
         try {
             out.println("searchTag");
             out.println(tag);
+            out.flush();
+
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
+                List<Song> songs = new ArrayList<>(size);
+                while (size > 0) {
+                    songs.add(Song.descerealize(in.readStringArray()));
+                    --size;
+                }
+                return songs;
+            } else {
+                throw new RemoteModelException(in.readLine());
+            }
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
+
+    public List<Song> mostDownloaded(int top) throws RemoteModelException {
+        try {
+            out.println("mostDownloaded");
+            out.println(top);
             out.flush();
 
             if (in.readLineToBoolean()) {

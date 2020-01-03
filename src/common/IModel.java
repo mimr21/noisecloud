@@ -29,4 +29,6 @@ public interface IModel {
     Collection<Song> searchArtist(String artist) throws RemoteModelException;
 
     Collection<Song> searchTag(String tag) throws RemoteModelException;
+
+    Collection<Song> mostDownloaded(int top) throws RemoteModelException;
 }

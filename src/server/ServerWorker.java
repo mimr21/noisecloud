@@ -64,6 +64,9 @@ class ServerWorker implements Runnable {
                         case "searchTag":
                             searchTag();
                             break;
+                        case "mostDownloaded":
+                            mostDownloaded();
+                            break;
                         default:
                             out.println(false);
                             out.println("Operação desconhecida.");
@@ -189,6 +192,15 @@ class ServerWorker implements Runnable {
         String tag = in.readLine();
 
         Collection<Song> songs = model.searchTag(tag);
+
+        out.println(true);
+        sendCollection(songs);
+    }
+
+    private void mostDownloaded() throws IOException, RemoteModelException {
+        int top = in.readLineToInt();
+
+        Collection<Song> songs = model.mostDownloaded(top);
 
         out.println(true);
         sendCollection(songs);

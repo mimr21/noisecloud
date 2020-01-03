@@ -3,17 +3,18 @@ package common;
 import static common.Noisecloud.containsIgnoreCase;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Song implements Lockable, Cerealizable, Comparable<Song> {
     private final int id;
+    private final String filename;
     private String title;
     private String artist;
     private int year;
     private String[] tags;
     private int downloads;
-    private String filename;
 
     private final ReentrantLock lock = new ReentrantLock(true);
 
@@ -51,20 +52,28 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
                 str_arr[5]);
     }
 
+    public static final Comparator<Song> topDownloadsComparator = (song1, song2) -> {
+        int r = - Integer.compare(song1.downloads, song2.downloads);
+
+        if (r == 0)
+            r = song1.compareTo(song2);
+
+        return r;
+    };
+
     public int getID() {return this.id;}
+    public String getFilename() {return filename;}
     public String getTitle() {return this.title;}
     public String getArtist() {return this.artist;}
     public int getYear() {return this.year;}
     public String[] getTags() {return this.tags.clone();}
     public int getDownloads() {return this.downloads;}
-    public String getFilename() {return filename;}
 
     public void setTitle(String t) {this.title = t;}
     public void setArtist(String a) {this.artist = a;}
     public void setYear(int y) {this.year = y;}
     public void setTags(String[] t) {this.tags = t.clone();}
     public void setDownloads(int d) {this.downloads = d;}
-    public void setFilename(String filename) {this.filename = filename;}
 
     public boolean equals(Object o) {
         if (this == o) return true;
