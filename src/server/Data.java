@@ -5,6 +5,7 @@ import common.*;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 
@@ -129,7 +130,7 @@ class Data implements IModel {                            //                    
         }
     }
 
-    public Collection<User> listUsers() {
+    public SortedSet<User> listUsers() {
         users.lock();
 
         Collection<User> users_aux = users.values();
@@ -139,7 +140,7 @@ class Data implements IModel {                            //                    
 
         users.unlock();
 
-        Set<User> r = new TreeSet<>();
+        SortedSet<User> r = new TreeSet<>();
 
         for (User user : users_aux) {
             r.add(user.clone());
@@ -149,7 +150,7 @@ class Data implements IModel {                            //                    
         return r;
     }
 
-    public Collection<Song> listSongs() {
+    public SortedSet<Song> listSongs() {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -159,7 +160,7 @@ class Data implements IModel {                            //                    
 
         songs.unlock();
 
-        Set<Song> r = new TreeSet<>();
+        SortedSet<Song> r = new TreeSet<>();
 
         for (Song song : songs_aux) {
             r.add(song.clone());
@@ -169,7 +170,7 @@ class Data implements IModel {                            //                    
         return r;
     }
 
-    public Collection<Song> search(String tag) {
+    public SortedSet<Song> searchTitle(String title) {
         songs.lock();
 
         Collection<Song> songs_aux = songs.values();
@@ -179,7 +180,49 @@ class Data implements IModel {                            //                    
 
         songs.unlock();
 
-        Set<Song> match = new TreeSet<>();
+        SortedSet<Song> match = new TreeSet<>();
+
+        for (Song song : songs_aux) {
+            if (song.containsTitle(title))
+                match.add(song.clone());
+            song.unlock();
+        }
+
+        return match;
+    }
+
+    public SortedSet<Song> searchArtist(String artist) {
+        songs.lock();
+
+        Collection<Song> songs_aux = songs.values();
+
+        for (Song song : songs_aux)
+            song.lock();
+
+        songs.unlock();
+
+        SortedSet<Song> match = new TreeSet<>();
+
+        for (Song song : songs_aux) {
+            if (song.containsArtist(artist))
+                match.add(song.clone());
+            song.unlock();
+        }
+
+        return match;
+    }
+
+    public SortedSet<Song> searchTag(String tag) {
+        songs.lock();
+
+        Collection<Song> songs_aux = songs.values();
+
+        for (Song song : songs_aux)
+            song.lock();
+
+        songs.unlock();
+
+        SortedSet<Song> match = new TreeSet<>();
 
         for (Song song : songs_aux) {
             if (song.containsTag(tag))

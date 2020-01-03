@@ -130,9 +130,17 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
         ++downloads;
     }
 
+    public boolean containsTitle(String title) {
+        return this.title.contains(title);
+    }
+
+    public boolean containsArtist(String artist) {
+        return this.artist.contains(artist);
+    }
+
     public boolean containsTag(String tag) {
         for (String t : tags)
-            if (t.equals(tag))
+            if (t.contains(tag))
                 return true;
 
         return false;

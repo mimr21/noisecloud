@@ -26,11 +26,13 @@ class View {
     }
 
     public void main_menu() {
-        out.println("1) Upload");
-        out.println("2) Todas as músicas");
-        out.println("3) Procurar músicas");
-        out.println("4) Utilizadores");
-        out.println("5) Log out");
+        out.println("1) Todas as músicas");
+        out.println("2) Procurar por título");
+        out.println("3) Procurar por intérprete");
+        out.println("4) Procurar por tag");
+        out.println("5) Upload");
+        out.println("6) Utilizadores");
+        out.println("7) Log out");
     }
 
     public void err(String msg) {
@@ -41,26 +43,25 @@ class View {
         out.println("Erro: " + e.getMessage());
     }
 
-    public void print(List<String> strs) {
-        final int STRINGS_PER_LINE = 3;
+    public void print(List<String> strs, final int STRINGS_PER_LINE) {
         final int NUM_STRINGS = strs.size();
         final int STRING_WIDTH = maxWidth(strs);
 
-        for (int i = 0; i < NUM_STRINGS; ++i) {
+        int i = 0;
+        for (; i < NUM_STRINGS; ++i) {
             int x = i % STRINGS_PER_LINE;
 
-            if (x == 0)
-                out.print(enlarge(strs.get(i), STRING_WIDTH));
-            else if (x == STRINGS_PER_LINE-1)
-                out.println(TAB + strs.get(i));
-            else
-                out.print(TAB + enlarge(strs.get(i), STRING_WIDTH));
-        }
-    }
+            if (x > 0)
+                out.print(TAB);
 
-    public void println(List<String> strs) {
-        print(strs);
-        out.println();
+            if (x == STRINGS_PER_LINE-1)
+                out.println(strs.get(i));
+            else
+                out.print(enlarge(strs.get(i), STRING_WIDTH));
+        }
+
+        if (i % STRINGS_PER_LINE != 0)
+            out.println();
     }
 
     private int maxWidth(List<String> strs) {

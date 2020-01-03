@@ -6,7 +6,10 @@ import static common.Noisecloud.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 
@@ -76,7 +79,10 @@ class Stub implements IModel {
         }
     }
 
-    public int upload(String title, String artist, int year, String[] tags, String filepath) throws RemoteModelException {
+    public int upload(String title, String artist, int year, String[] tags, String filepath) throws FileNotFoundException, RemoteModelException {
+        if (!(new File(filepath).isFile()))
+            throw new FileNotFoundException(filepath);
+
         try {
             out.println("upload");
             out.println(title);
@@ -109,19 +115,21 @@ class Stub implements IModel {
             } else {
                 throw new RemoteModelException(in.readLine());
             }
+        } catch (FileAlreadyExistsException e) {
+            throw new RemoteModelException("'" + e.getMessage() + "' already exists");
         } catch (IOException e) {
             throw new RemoteModelException(e.getMessage());
         }
     }
 
-    public Collection<User> listUsers() throws RemoteModelException {
+    public List<User> listUsers() throws RemoteModelException {
         try {
             out.println("listUsers");
             out.flush();
 
             if (in.readLineToBoolean()) {
                 int size = in.readLineToInt();
-                Collection<User> users = new TreeSet<>();
+                List<User> users = new ArrayList<>(size);
                 while (size > 0) {
                     users.add(User.descerealize(in.readStringArray()));
                     --size;
@@ -135,14 +143,14 @@ class Stub implements IModel {
         }
     }
 
-    public Collection<Song> listSongs() throws RemoteModelException {
+    public List<Song> listSongs() throws RemoteModelException {
         try {
             out.println("listSongs");
             out.flush();
 
             if (in.readLineToBoolean()) {
                 int size = in.readLineToInt();
-                Collection<Song> songs = new TreeSet<>();
+                List<Song> songs = new ArrayList<>(size);
                 while (size > 0) {
                     songs.add(Song.descerealize(in.readStringArray()));
                     --size;
@@ -156,7 +164,7 @@ class Stub implements IModel {
         }
     }
 
-    public Collection<Song> search(String tag) throws RemoteModelException {
+    public List<Song> search(String tag) throws RemoteModelException {
         try {
             out.println("search");
             out.println(tag);
@@ -164,7 +172,7 @@ class Stub implements IModel {
 
             if (in.readLineToBoolean()) {
                 int size = in.readLineToInt();
-                Collection<Song> songs = new TreeSet<>();
+                List<Song> songs = new ArrayList<>(size);
                 while (size > 0) {
                     songs.add(Song.descerealize(in.readStringArray()));
                     --size;

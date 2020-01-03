@@ -64,9 +64,15 @@ class ServerWorker implements Runnable {
                     }
                 } catch (RemoteModelException
                         | UserNotFoundException | SongNotFoundException | UsernameAlreadyExistsException | InvalidPasswordException
-                        | NumberFormatException | FileNotFoundException | FileAlreadyExistsException e) {
+                        | NumberFormatException e) {
                     out.println(false);
                     out.println(e.getMessage());
+                } catch (FileNotFoundException e) {
+                    out.println(false);
+                    out.println("'" + e.getMessage() + "' not found");
+                } catch (FileAlreadyExistsException e) {
+                    out.println(false);
+                    out.println("'" + e.getMessage() + "' already exists");
                 }
                 out.flush();
             }

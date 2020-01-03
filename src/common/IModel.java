@@ -2,8 +2,10 @@ package common;
 
 import exceptions.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.SortedSet;
 
 
 public interface IModel {
@@ -15,7 +17,7 @@ public interface IModel {
 
     boolean logout(String username) throws UserNotFoundException, RemoteModelException;
 
-    int upload(String title, String artist, int year, String[] tags, String filename) throws RemoteModelException;
+    int upload(String title, String artist, int year, String[] tags, String filename) throws FileNotFoundException, RemoteModelException;
 
     Song download(int id) throws SongNotFoundException, RemoteModelException;
 
@@ -23,5 +25,9 @@ public interface IModel {
 
     Collection<Song> listSongs() throws RemoteModelException;
 
-    Collection<Song> search(String tag) throws RemoteModelException;
+    Collection<Song> searchTitle(String title) throws RemoteModelException;
+
+    Collection<Song> searchArtist(String artist) throws RemoteModelException;
+
+    Collection<Song> searchTag(String tag) throws RemoteModelException;
 }

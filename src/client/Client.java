@@ -118,22 +118,30 @@ public class Client {
 
             switch (stdin.readLine()) {
                 case "1":
-                    upload();
-                    break;
-
-                case "2":
                     todas_as_musicas();
                     break;
 
+                case "2":
+                    procurar_musicas_por_titulo();
+                    break;
+
                 case "3":
-                    procurar_musicas();
+                    procurar_musicas_por_interprete();
                     break;
 
                 case "4":
+                    procurar_musicas_por_tag();
+                    break;
+
+                case "5":
+                    upload();
+                    break;
+
+                case "6":
                     todos_os_utilizadores();
                     break;
 
-                case "5":   // log out
+                case "7":   // log out
                     cont = false;
                     break;
 
@@ -164,32 +172,98 @@ public class Client {
         try {
             int id = model.upload(title, artist, year, tags, filepath);
             System.out.println("Upload feito com sucesso. ID da música: " + id);
+        } catch (FileNotFoundException e) {
+            view.err("'" + e.getMessage() + "' not found");
         } catch (RemoteModelException e) {
             view.err(e);
         }
     }
 
-    private void todas_as_musicas() {
+    private void todas_as_musicas() throws IOException {
         try {
-            Collection<Song> songs = model.listSongs();
+            List<Song> songs = (List<Song>) model.listSongs();
             if (songs.isEmpty())
                 System.out.println("Não há músicas");
-            else
-                view.println(toStringList(songs));
+            else {
+                List<String> strs = new ArrayList<>();
+                int i = 0;
+
+                for (Song song : songs)
+                    strs.add(++i + ") " + song.prettyPrint());
+
+                view.print(strs, 3);
+
+                download(songs);
+            }
         } catch (RemoteModelException e) {
             view.err(e);
         }
     }
 
-    private void procurar_musicas() throws IOException {
+    private void procurar_musicas_por_titulo() throws IOException {
+        System.out.print("Título: ");
+        String title = stdin.readLine();
+        try {
+            List<Song> songs = (List<Song>) model.searchTitle(title);
+            if (songs.isEmpty())
+                System.out.println("Não há músicas com o título '" + title + "'");
+            else {
+                List<String> strs = new ArrayList<>();
+                int i = 0;
+
+                for (Song song : songs)
+                    strs.add(++i + ") " + song.prettyPrint());
+
+                view.print(strs, 3);
+
+                download(songs);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void procurar_musicas_por_interprete() throws IOException {
+        System.out.print("Intérprete: ");
+        String artist = stdin.readLine();
+        try {
+            List<Song> songs = (List<Song>) model.searchArtist(artist);
+            if (songs.isEmpty())
+                System.out.println("Não há músicas do intérprete '" + artist + "'");
+            else {
+                List<String> strs = new ArrayList<>();
+                int i = 0;
+
+                for (Song song : songs)
+                    strs.add(++i + ") " + song.prettyPrint());
+
+                view.print(strs, 3);
+
+                download(songs);
+            }
+        } catch (RemoteModelException e) {
+            view.err(e);
+        }
+    }
+
+    private void procurar_musicas_por_tag() throws IOException {
         System.out.print("Tag: ");
         String tag = stdin.readLine();
         try {
-            Collection<Song> songs = model.search(tag);
+            List<Song> songs = (List<Song>) model.searchTag(tag);
             if (songs.isEmpty())
                 System.out.println("Não há músicas com a tag '" + tag + "'");
-            else
-                view.println(toStringList(songs));
+            else {
+                List<String> strs = new ArrayList<>();
+                int i = 0;
+
+                for (Song song : songs)
+                    strs.add(++i + ") " + song.prettyPrint() + " " + Arrays.toString(song.getTags()));
+
+                view.print(strs, 2);
+
+                download(songs);
+            }
         } catch (RemoteModelException e) {
             view.err(e);
         }
@@ -197,7 +271,7 @@ public class Client {
 
     private void todos_os_utilizadores() {
         try {
-            Collection<User> users = model.listUsers();
+            List<User> users = (List<User>) model.listUsers();
             for (User user : users)
                 System.out.println(user.getUsername());
         } catch (RemoteModelException e) {
@@ -205,13 +279,27 @@ public class Client {
         }
     }
 
-    private static List<String> toStringList(Collection<Song> songs) {
-        List<String> r = new ArrayList<>();
-        int i = 0;
+    private void download(List<Song> songs) throws IOException {
+        System.out.print("download: ");
 
-        for (Song song : songs)
-            r.add(++i + ") " + song.prettyPrint());
+        int index;
+        try {
+            index = Integer.parseInt(stdin.readLine());
+        } catch (NumberFormatException e) {
+            return;
+        }
+        --index;
 
-        return r;
+        if (index < 0 || index >= songs.size()) {
+            view.err("Índice inválido");
+            return;
+        }
+
+        try {
+            model.download(songs.get(index).getID());
+            System.out.println("Download efetuado com sucesso");
+        } catch (SongNotFoundException | RemoteModelException e) {
+            view.err(e);
+        }
     }
 }
