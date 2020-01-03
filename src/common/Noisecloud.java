@@ -15,9 +15,8 @@ public class Noisecloud {
         SEPARATOR = System.getProperty("file.separator");
         ALT_SEPARATOR = SEPARATOR.equals("\\") ? "/" : "\\";
 
-        String dir = System.getProperty("user.dir") + SEPARATOR;
-        SERVER_STORAGE_PATH = dir + "_server_storage" + SEPARATOR;
-        CLIENT_DOWNLOADS_PATH = dir + "_client_downloads" + SEPARATOR;
+        SERVER_STORAGE_PATH = "_server_storage" + SEPARATOR;
+        CLIENT_DOWNLOADS_PATH = "_client_downloads" + SEPARATOR;
     }
 
 
@@ -42,5 +41,9 @@ public class Noisecloud {
 
     public static String normalizePath(String filepath) {
         return filepath.replace(ALT_SEPARATOR, SEPARATOR);
+    }
+
+    public static boolean containsIgnoreCase(String s1, String s2) {
+        return s1.toLowerCase().contains(s2.toLowerCase());
     }
 }

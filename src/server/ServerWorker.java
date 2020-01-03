@@ -2,7 +2,7 @@ package server;
 
 import exceptions.*;
 import common.*;
-import static common.Noisecloud.*;
+import static common.Noisecloud.storagePath;
 
 import java.io.*;
 import java.net.Socket;
@@ -55,8 +55,14 @@ class ServerWorker implements Runnable {
                         case "listSongs":
                             listSongs();
                             break;
-                        case "search":
-                            search();
+                        case "searchTitle":
+                            searchTitle();
+                            break;
+                        case "searchArtist":
+                            searchArtist();
+                            break;
+                        case "searchTag":
+                            searchTag();
                             break;
                         default:
                             out.println(false);
@@ -151,28 +157,46 @@ class ServerWorker implements Runnable {
         Collection<User> users = model.listUsers();
 
         out.println(true);
-        out.println(users.size());
-        for (User user : users)
-            out.print(user.cerealize());
+        sendCollection(users);
     }
 
     private void listSongs() throws IOException, RemoteModelException {
-        Collection<Song> songs0 = model.listSongs();
+        Collection<Song> songs = model.listSongs();
 
         out.println(true);
-        out.println(songs0.size());
-        for (Song song1 : songs0)
-            out.print(song1.cerealize());
+        sendCollection(songs);
     }
 
-    private void search() throws IOException, RemoteModelException {
-        String tag = in.readLine();
+    private void searchTitle() throws IOException, RemoteModelException {
+        String title = in.readLine();
 
-        Collection<Song> songs1 = model.search(tag);
+        Collection<Song> songs = model.searchTitle(title);
 
         out.println(true);
-        out.println(songs1.size());
-        for (Song song2 : songs1)
-            out.print(song2.cerealize());
+        sendCollection(songs);
+    }
+
+    private void searchArtist() throws IOException, RemoteModelException {
+        String artist = in.readLine();
+
+        Collection<Song> songs = model.searchArtist(artist);
+
+        out.println(true);
+        sendCollection(songs);
+    }
+
+    private void searchTag() throws IOException, RemoteModelException {
+        String tag = in.readLine();
+
+        Collection<Song> songs = model.searchTag(tag);
+
+        out.println(true);
+        sendCollection(songs);
+    }
+
+    private void sendCollection(Collection<? extends Cerealizable> c) throws IOException {
+        out.println(c.size());
+        for (Cerealizable e : c)
+            out.print(e.cerealize());
     }
 }

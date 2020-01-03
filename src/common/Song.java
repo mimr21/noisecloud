@@ -1,5 +1,7 @@
 package common;
 
+import static common.Noisecloud.containsIgnoreCase;
+
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -114,10 +116,10 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     }
 
     public int compareTo(Song s) {
-        int r = this.artist.compareTo(s.artist);
+        int r = this.artist.compareToIgnoreCase(s.artist);
 
         if (r == 0) {
-            r = this.title.compareTo(s.title);
+            r = this.title.compareToIgnoreCase(s.title);
 
             if (r == 0)
                 r = Integer.compare(this.id, s.id);
@@ -131,16 +133,16 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     }
 
     public boolean containsTitle(String title) {
-        return this.title.contains(title);
+        return containsIgnoreCase(this.title, title);
     }
 
     public boolean containsArtist(String artist) {
-        return this.artist.contains(artist);
+        return containsIgnoreCase(this.artist, artist);
     }
 
     public boolean containsTag(String tag) {
-        for (String t : tags)
-            if (t.contains(tag))
+        for (String tag0 : this.tags)
+            if (containsIgnoreCase(tag0, tag))
                 return true;
 
         return false;

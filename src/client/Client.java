@@ -4,7 +4,7 @@ import exceptions.*;
 import common.IModel;
 import common.Song;
 import common.User;
-import static common.Noisecloud.*;
+import static common.Noisecloud.normalizePath;
 
 import java.io.*;
 import java.util.*;
@@ -64,11 +64,11 @@ public class Client {
 
             switch (stdin.readLine()) {
                 case "1":
-                    entrar();
+                    login();
                     break;
 
                 case "2":
-                    criar_conta();
+                    sign_up();
                     break;
 
                 case "3":   // sair
@@ -81,7 +81,7 @@ public class Client {
         }
     }
 
-    private void entrar() throws IOException {
+    private void login() throws IOException {
         System.out.print("Nome de utilizador: ");
         String username = stdin.readLine();
         System.out.print("          Password: ");
@@ -94,7 +94,7 @@ public class Client {
         }
     }
 
-    private void criar_conta() throws IOException {
+    private void sign_up() throws IOException {
         System.out.print(" Nome de utilizador: ");
         String username = stdin.readLine();
         System.out.print("           Password: ");
@@ -118,19 +118,19 @@ public class Client {
 
             switch (stdin.readLine()) {
                 case "1":
-                    todas_as_musicas();
+                    songs();
                     break;
 
                 case "2":
-                    procurar_musicas_por_titulo();
+                    search_songs_by_title();
                     break;
 
                 case "3":
-                    procurar_musicas_por_interprete();
+                    search_songs_by_artist();
                     break;
 
                 case "4":
-                    procurar_musicas_por_tag();
+                    search_songs_by_tag();
                     break;
 
                 case "5":
@@ -138,7 +138,7 @@ public class Client {
                     break;
 
                 case "6":
-                    todos_os_utilizadores();
+                    users();
                     break;
 
                 case "7":   // log out
@@ -179,7 +179,7 @@ public class Client {
         }
     }
 
-    private void todas_as_musicas() throws IOException {
+    private void songs() throws IOException {
         try {
             List<Song> songs = (List<Song>) model.listSongs();
             if (songs.isEmpty())
@@ -191,7 +191,7 @@ public class Client {
                 for (Song song : songs)
                     strs.add(++i + ") " + song.prettyPrint());
 
-                view.print(strs, 3);
+                view.printV(strs, 3);
 
                 download(songs);
             }
@@ -200,7 +200,7 @@ public class Client {
         }
     }
 
-    private void procurar_musicas_por_titulo() throws IOException {
+    private void search_songs_by_title() throws IOException {
         System.out.print("Título: ");
         String title = stdin.readLine();
         try {
@@ -214,7 +214,7 @@ public class Client {
                 for (Song song : songs)
                     strs.add(++i + ") " + song.prettyPrint());
 
-                view.print(strs, 3);
+                view.printV(strs, 3);
 
                 download(songs);
             }
@@ -223,7 +223,7 @@ public class Client {
         }
     }
 
-    private void procurar_musicas_por_interprete() throws IOException {
+    private void search_songs_by_artist() throws IOException {
         System.out.print("Intérprete: ");
         String artist = stdin.readLine();
         try {
@@ -237,7 +237,7 @@ public class Client {
                 for (Song song : songs)
                     strs.add(++i + ") " + song.prettyPrint());
 
-                view.print(strs, 3);
+                view.printV(strs, 3);
 
                 download(songs);
             }
@@ -246,7 +246,7 @@ public class Client {
         }
     }
 
-    private void procurar_musicas_por_tag() throws IOException {
+    private void search_songs_by_tag() throws IOException {
         System.out.print("Tag: ");
         String tag = stdin.readLine();
         try {
@@ -260,7 +260,7 @@ public class Client {
                 for (Song song : songs)
                     strs.add(++i + ") " + song.prettyPrint() + " " + Arrays.toString(song.getTags()));
 
-                view.print(strs, 2);
+                view.printV(strs, 2);
 
                 download(songs);
             }
@@ -269,7 +269,7 @@ public class Client {
         }
     }
 
-    private void todos_os_utilizadores() {
+    private void users() {
         try {
             List<User> users = (List<User>) model.listUsers();
             for (User user : users)

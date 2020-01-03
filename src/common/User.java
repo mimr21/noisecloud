@@ -76,7 +76,7 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     }
 
     public int compareTo(User u) {
-        return this.username.compareTo(u.username);
+        return this.username.compareToIgnoreCase(u.username);
     }
 
     public boolean isValid(String pass) {

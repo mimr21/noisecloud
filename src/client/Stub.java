@@ -2,15 +2,14 @@ package client;
 
 import exceptions.RemoteModelException;
 import common.*;
-import static common.Noisecloud.*;
+import static common.Noisecloud.downloadsPath;
+import static common.Noisecloud.getFilename;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 
 
 // package-private
@@ -164,9 +163,53 @@ class Stub implements IModel {
         }
     }
 
-    public List<Song> search(String tag) throws RemoteModelException {
+    public List<Song> searchTitle(String title) throws RemoteModelException {
         try {
-            out.println("search");
+            out.println("searchTitle");
+            out.println(title);
+            out.flush();
+
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
+                List<Song> songs = new ArrayList<>(size);
+                while (size > 0) {
+                    songs.add(Song.descerealize(in.readStringArray()));
+                    --size;
+                }
+                return songs;
+            } else {
+                throw new RemoteModelException(in.readLine());
+            }
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
+
+    public List<Song> searchArtist(String artist) throws RemoteModelException {
+        try {
+            out.println("searchArtist");
+            out.println(artist);
+            out.flush();
+
+            if (in.readLineToBoolean()) {
+                int size = in.readLineToInt();
+                List<Song> songs = new ArrayList<>(size);
+                while (size > 0) {
+                    songs.add(Song.descerealize(in.readStringArray()));
+                    --size;
+                }
+                return songs;
+            } else {
+                throw new RemoteModelException(in.readLine());
+            }
+        } catch (IOException e) {
+            throw new RemoteModelException(e.getMessage());
+        }
+    }
+
+    public List<Song> searchTag(String tag) throws RemoteModelException {
+        try {
+            out.println("searchTag");
             out.println(tag);
             out.flush();
 

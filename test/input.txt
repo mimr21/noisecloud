@@ -1,0 +1,95 @@
+2
+luis
+123
+2
+mimi
+123
+2
+bruno
+123
+2
+ricardo
+123
+1
+luis
+123
+5
+Electric Blue
+Arcade Fire
+2017
+dance-rock
+test_media\Arcade Fire - Electric Blue.mp3
+5
+Mardy Bum
+Arctic Monkeys
+2006
+indie rock
+test_media\Arctic Monkeys - Mardy Bum.mp3
+5
+Everytime
+boy pablo
+2017
+indie rock/indie pop
+test_media\boy pablo - Everytime.mp3
+5
+Burning Love
+Elvis Presley
+1973
+rock
+test_media\Elvis Presley - Burning Love.mp3
+5
+On Melancholy Hill
+Gorillaz
+2010
+synth-pop/new wave
+test_media\Gorillaz - On Melancholy Hill.mp3
+5
+Sanctuary
+Joji
+2019
+lo-fi/trap/electronica/r&b
+test_media\Joji - Sanctuary.mp3
+5
+Chamber Of Reflection
+Mac DeMarco
+2014
+soft rock/psychedelic pop/lo-fi
+test_media\Mac DeMarco - Chamber Of Reflection.mp3
+5
+Marooned
+Pink Floyd
+1994
+progressive rock/instrumental rock
+test_media\Pink Floyd - Marooned.mp3
+5
+So Much I
+Red Hot Chili Peppers
+2006
+funk rock/alternative rock
+test_media\Red Hot Chili Peppers - So Much I.mp3
+5
+One Rizla
+Shame
+2018
+post-punk/indie rock
+test_media\Shame - One Rizla.mp3
+5
+Star Roving
+Slowdive
+2017
+shoegazing
+test_media\Slowdive - Star Roving.mp3
+5
+It Might Be Time
+Tame Impala
+2019
+psychedelic pop
+test_media\Tame Impala - It Might Be Time.mp3
+5
+Juvenile
+The Blaze
+2017
+electronic/dance
+test_media\The Blaze - Juvenile.mp3
+7
+3

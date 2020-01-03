@@ -5,7 +5,6 @@ import exceptions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.SortedSet;
 
 
 public interface IModel {
