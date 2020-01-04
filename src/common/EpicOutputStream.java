@@ -1,5 +1,7 @@
 package common;
 
+import static common.Noisecloud.MAXSIZE;
+
 import java.io.*;
 
 
@@ -164,7 +166,7 @@ public class EpicOutputStream {
         println(src.length());
 
         // envia o ficheiro
-        byte[] bytes = new byte[Noisecloud.MAXSIZE];
+        byte[] bytes = new byte[MAXSIZE];
         int count;
         FileInputStream file_in = new FileInputStream(src);
         while ((count = file_in.read(bytes)) > 0)

@@ -6,7 +6,8 @@ import java.util.List;
 import static java.lang.System.out;
 
 
-public class Navigator {
+// package-private
+class Navigator {
     private List<String> strings;
     private final int size;
     private int start_index;
@@ -21,7 +22,7 @@ public class Navigator {
         TAB_LENGTH = TAB.length();
     }
 
-    public static enum Orientation {
+    public enum Orientation {
         HORIZONTAL,
         VERTICAL
     }

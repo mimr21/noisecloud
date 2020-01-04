@@ -15,8 +15,7 @@ public class Song implements Lockable, Cerealizable, Comparable<Song> {
     private int year;
     private String[] tags;
     private int downloads;
-
-    private final ReentrantLock lock = new ReentrantLock(true);
+    private final ReentrantLock lock = new ReentrantLock();
 
 
     public Song(int id, String title, String artist, int year, String[] tags, int downloads, String filename) {

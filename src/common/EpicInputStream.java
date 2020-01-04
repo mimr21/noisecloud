@@ -1,5 +1,7 @@
 package common;
 
+import static common.Noisecloud.MAXSIZE;
+
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 
@@ -136,7 +138,7 @@ public class EpicInputStream {
             long length = Long.parseLong(readLine());
 
             // lê os bytes para o ficheiro
-            byte[] bytes = new byte[Noisecloud.MAXSIZE];
+            byte[] bytes = new byte[MAXSIZE];
             int count = 0;
             FileOutputStream file_out = new FileOutputStream(dest);
             while ((length -= count) > 0 && (count = in.read(bytes)) > 0)

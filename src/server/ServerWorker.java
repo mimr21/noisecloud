@@ -15,14 +15,16 @@ class ServerWorker implements Runnable {
     private final int id;
     private final Socket socket;
     private final IModel model;
+    private final DownloadQueue downQ;
     private final EpicInputStream in;
     private final EpicOutputStream out;
 
 
-    public ServerWorker(int id, Socket socket, IModel model) throws IOException {
+    public ServerWorker(int id, Socket socket, IModel model, DownloadQueue downQ) throws IOException {
         this.id = id;
         this.socket = socket;
         this.model = model;
+        this.downQ = downQ;
         this.in = new EpicInputStream(new DataInputStream(socket.getInputStream()));
         this.out = new EpicOutputStream(new DataOutputStream(socket.getOutputStream()));
     }
@@ -150,6 +152,8 @@ class ServerWorker implements Runnable {
         int id = in.readLineToInt();
 
         Song song = model.download(id);
+
+        downQ.enterQueue();
 
         out.println(true);
         out.print(song.cerealize());

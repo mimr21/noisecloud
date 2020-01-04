@@ -7,8 +7,7 @@ public class User implements Lockable, Cerealizable, Comparable<User> {
     private final String username;
     private String password;
     private boolean log;
-
-    private final ReentrantLock lock = new ReentrantLock(true);
+    private final ReentrantLock lock = new ReentrantLock();
 
 
     public User(String username, String password) {
