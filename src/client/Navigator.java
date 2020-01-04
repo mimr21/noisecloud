@@ -72,28 +72,6 @@ public class Navigator {
         return print_page();
     }
 
-    public int navigator_width() {
-        if (horizontal) {
-            final int size = Math.min(this.size, this.num_columns * this.num_lines);
-            final int num_columns = Math.min(size, this.num_columns);
-            final int last_column = num_columns - 1;
-            int max_length = 0;
-            int last_column_max_length = 0;
-
-            for (int i = 0; i < size; ++i) {
-                int length = strings.get(start_index + i).length();
-                if (length > max_length)
-                    max_length = length;
-                if (i % num_columns == last_column && length > last_column_max_length)
-                    last_column_max_length = length;
-            }
-
-            return max_length*last_column + TAB_LENGTH*last_column + last_column_max_length;
-        } else {
-            return 0; // todo
-        }
-    }
-
     private int printV(List<String> strings) {
         final int size = strings.size();
 

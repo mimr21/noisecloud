@@ -315,7 +315,6 @@ public class Client {
 
     private void navigator(List<String> strings, int num_lines, int num_columns) throws IOException {
         Navigator nav = new Navigator(strings, Orientation.VERTICAL, num_lines, num_columns);
-        view.printInitialNavigatorBar(nav);
         int width = nav.print_page();
         view.printNavigatorBar(width);
 

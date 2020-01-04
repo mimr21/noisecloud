@@ -35,14 +35,6 @@ class View {
         out.println("3) Procurar por título        6) Download                       9) Log out");
     }
 
-    public void printInitialNavigatorBar(Navigator nav) {
-        out.println(
-                PADDING.repeat(
-                        Math.max(NAVIGATOR_BAR_WIDTH, nav.navigator_width())
-                )
-        );
-    }
-
     public void printNavigatorBar(int width) {
         int diff = width - NAVIGATOR_BAR_WIDTH;
 
