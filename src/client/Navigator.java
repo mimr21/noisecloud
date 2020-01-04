@@ -73,11 +73,25 @@ public class Navigator {
     }
 
     public int navigator_width() {
-        int max_string_length = 1;
-        int last_column_max_length = 1;
-        int x = Math.min(num_columns, size) - 1;
+        if (horizontal) {
+            final int size = Math.min(this.size, this.num_columns * this.num_lines);
+            final int num_columns = Math.min(size, this.num_columns);
+            final int last_column = num_columns - 1;
+            int max_length = 0;
+            int last_column_max_length = 0;
 
-        return max_string_length*x + TAB_LENGTH*x + last_column_max_length;
+            for (int i = 0; i < size; ++i) {
+                int length = strings.get(start_index + i).length();
+                if (length > max_length)
+                    max_length = length;
+                if (i % num_columns == last_column && length > last_column_max_length)
+                    last_column_max_length = length;
+            }
+
+            return max_length*last_column + TAB_LENGTH*last_column + last_column_max_length;
+        } else {
+            return 0; // todo
+        }
     }
 
     private int printV(List<String> strings) {
@@ -127,8 +141,9 @@ public class Navigator {
 
     private int printH(List<String> strings) {
         final int size = strings.size();
-        final int max_string_length = maxLength(strings);
+        final int num_columns = Math.min(this.num_columns, size);
         final int xmax = num_columns - 1;
+        final int max_string_length = maxLength(strings);
         int last_column_max_length = 0;
 
         int i = 0;
@@ -152,9 +167,7 @@ public class Navigator {
         if (i % num_columns != 0)
             out.println();
 
-        final int x = Math.min(num_columns, size) - 1;
-
-        return max_string_length*x + TAB_LENGTH*x + last_column_max_length;
+        return max_string_length*xmax + TAB_LENGTH*xmax + last_column_max_length;
     }
 
     private static int maxLength(List<String> strings) {
