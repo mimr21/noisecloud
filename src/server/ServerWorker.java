@@ -69,6 +69,8 @@ class ServerWorker implements Runnable {
                         case "mostDownloaded":
                             mostDownloaded();
                             break;
+                        case "hear":
+                            hasNotif();
                         default:
                             out.println(false);
                             out.println("Operação desconhecida.");
@@ -208,6 +210,15 @@ class ServerWorker implements Runnable {
 
         out.println(true);
         sendCollection(songs);
+    }
+
+    private void hasNotif() throws IOException {
+        String s = in.readLine();
+
+        String notif = model.hasNotif();
+
+        out.println(true);
+        out.println(notif);
     }
 
     private void sendCollection(Collection<? extends Cerealizable> c) throws IOException {
