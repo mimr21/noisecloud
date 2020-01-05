@@ -5,40 +5,21 @@ import common.*;
 
 import java.util.*;
 
-import static common.Noisecloud.MAXDOWN;
-
 
 // package-private
 class Data implements IModel {
     private final LockableMap<String, User> users;        // (username, User)
     private final LockableMap<Integer, Song> songs;       // (id, Song)
     private final ID songID;                              // next song id
-    private final NotifFlag notif;                           // last song uploaded
 
 
     public Data() {
         songID = new ID();
         users = new LockableHashMap<>();
         songs = new LockableHashMap<>();
-        notif = new NotifFlag();
     }
 
     public void end() {}
-
-    public String hasNotif(){
-        notif.lock();
-
-        while (notif.test()) {
-            notif.await();
-        }
-
-        String n = notif.getNotif();
-        notif.unlock();
-        notif.signalAll();
-
-        return n;
-
-    }
 
     public void addUser(String username, String password) throws UsernameAlreadyExistsException {
         users.lock();
@@ -120,10 +101,6 @@ class Data implements IModel {
         songs.put(id, s);
 
         songs.unlock();
-
-        notif.lock();
-        notif.update(title, artist);
-        notif.unlock();
 
         return id;
     }
