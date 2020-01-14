@@ -13,7 +13,6 @@ import java.util.*;
 
 public class Client {
     private final IModel model;
-    private final Notifications notif;
     private final View view;
     private final BufferedReader stdin;
 
@@ -36,7 +35,6 @@ public class Client {
 
     private Client() throws IOException {
         model = new Stub("localhost", 12345);
-        notif = new Notifications("localhost", 12345);
         view = new View();
         stdin = new BufferedReader(new InputStreamReader(System.in));
     }
@@ -49,7 +47,6 @@ public class Client {
 
         try {
             model.end();
-            notif.end();
         } catch (IOException e) {
             view.err(e);
         }
